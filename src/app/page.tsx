@@ -3,10 +3,11 @@
 import NodeRenderer from "@/features/query-builder/components/NodeRenderer";
 import { useQueryStore } from "@/state/queryStore";
 import { compileMongo } from "@/core/compiler/compileMongo";
+import { validateTree } from "@/core/validator/validateTree";
 
 export default function Page() {
 	const tree = useQueryStore((s) => s.tree);
-
+	const errors = validateTree(tree);
 	const compiledQuery = compileMongo(tree);
 
 	return (
@@ -41,6 +42,11 @@ export default function Page() {
 						{JSON.stringify(compiledQuery, null, 2)}
 					</pre>
 				</div>
+			</div>
+			<div style={{ color: "red" }}>
+				{errors.map((e, i) => (
+					<div key={i}>{e}</div>
+				))}
 			</div>
 		</div>
 	);
