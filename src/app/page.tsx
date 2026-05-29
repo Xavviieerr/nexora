@@ -2,13 +2,46 @@
 
 import NodeRenderer from "@/features/query-builder/components/NodeRenderer";
 import { useQueryStore } from "@/state/queryStore";
+import { compileMongo } from "@/core/compiler/compileMongo";
 
 export default function Page() {
 	const tree = useQueryStore((s) => s.tree);
 
+	const compiledQuery = compileMongo(tree);
+
 	return (
 		<div style={{ padding: 20 }}>
-			<NodeRenderer node={tree} />
+			<h1>Nexora</h1>
+
+			<div
+				style={{
+					display: "grid",
+					gridTemplateColumns: "1fr 1fr",
+					gap: 20,
+				}}
+			>
+				<div>
+					<h2>Query Builder</h2>
+
+					<NodeRenderer node={tree} />
+				</div>
+
+				<div>
+					<h2>Mongo Query Preview</h2>
+
+					<pre
+						style={{
+							background: "#111",
+							color: "#0f0",
+							padding: 16,
+							borderRadius: 8,
+							overflow: "auto",
+						}}
+					>
+						{JSON.stringify(compiledQuery, null, 2)}
+					</pre>
+				</div>
+			</div>
 		</div>
 	);
 }
