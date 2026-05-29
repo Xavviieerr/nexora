@@ -7,9 +7,9 @@ type Props = {
 };
 
 export default function GroupNode({ node, children }: Props) {
-	const addRule = useQueryStore((s) => s.addRuleToGroup);
-	const addGroup = useQueryStore((s) => s.addGroupToGroup);
-	const deleteNode = useQueryStore((s) => s.deleteNodeById);
+	const addRule = useQueryStore((s) => s.addRule);
+	const addGroup = useQueryStore((s) => s.addGroup);
+	const deleteNode = useQueryStore((s) => s.deleteNode);
 
 	return (
 		<div style={{ border: "1px solid #ccc", padding: 10, margin: 10 }}>

@@ -6,7 +6,7 @@ type Props = {
 };
 
 export default function RuleNode({ node }: Props) {
-	const deleteNode = useQueryStore((s) => s.deleteNodeById);
+	const deleteNode = useQueryStore((s) => s.deleteNode);
 
 	return (
 		<div style={{ border: "1px solid gray", margin: 5, padding: 5 }}>
