@@ -1,33 +1,19 @@
-type Props = {
-	rows: Record<string, any>[];
-};
+"use client";
 
-export default function ResultsTable({ rows }: Props) {
-	if (!rows.length) {
-		return <p>No results</p>;
+import { useExecutionStore } from "../store/executionStore";
+
+export default function ResultsTable() {
+	const results = useExecutionStore((s) => s.results);
+
+	if (!results.length) {
+		return <div>No results</div>;
 	}
 
-	const columns = Object.keys(rows[0]);
-
 	return (
-		<table>
-			<thead>
-				<tr>
-					{columns.map((column) => (
-						<th key={column}>{column}</th>
-					))}
-				</tr>
-			</thead>
+		<div>
+			<h3>Results ({results.length})</h3>
 
-			<tbody>
-				{rows.map((row) => (
-					<tr key={row.id}>
-						{columns.map((column) => (
-							<td key={column}>{String(row[column])}</td>
-						))}
-					</tr>
-				))}
-			</tbody>
-		</table>
+			<pre>{JSON.stringify(results, null, 2)}</pre>
+		</div>
 	);
 }
