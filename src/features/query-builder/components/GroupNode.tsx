@@ -2,6 +2,7 @@ import { GroupNode as GroupType } from "@/core/query/types";
 import { useQueryStore } from "@/state/queryStore";
 import CollapsibleGroup from "./ui/CollapsibleGroup";
 import SortableGroup from "../dnd/SortableGroup";
+import QueryBuilderDnd from "../dnd/QueryBuilderDnd";
 
 type Props = {
 	node: GroupType;
@@ -29,9 +30,20 @@ export default function GroupNode({ node, children }: Props) {
 				<button onClick={() => deleteNode(node.id)}>Delete</button>
 			</div>
 
-			<SortableGroup items={node.children.map((child) => child.id)}>
-				<div style={{ paddingLeft: 12 }}>{children}</div>
-			</SortableGroup>
+			<QueryBuilderDnd
+				parentId={node.id}
+				childIds={node.children.map((child) => child.id)}
+			>
+				<SortableGroup items={node.children.map((child) => child.id)}>
+					<div
+						style={{
+							paddingLeft: 12,
+						}}
+					>
+						{children}
+					</div>
+				</SortableGroup>
+			</QueryBuilderDnd>
 		</CollapsibleGroup>
 	);
 }
