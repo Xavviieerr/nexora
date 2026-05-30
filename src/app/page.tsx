@@ -2,14 +2,14 @@
 
 import NodeRenderer from "@/features/query-builder/components/NodeRenderer";
 import { useQueryStore } from "@/state/queryStore";
-import { compileMongo } from "@/core/compiler/compileMongo";
 import { validateTree } from "@/core/validator/validateTree";
+
 import ExecutionPanel from "@/features/query-execution/components/ExecutionPanel";
+import QueryPreviewPanel from "@/features/query-preview/components/QueryPreviewPanel";
 
 export default function Page() {
 	const tree = useQueryStore((s) => s.tree);
 	const errors = validateTree(tree);
-	const compiledQuery = compileMongo(tree);
 
 	return (
 		<div style={{ padding: 20 }}>
@@ -30,21 +30,11 @@ export default function Page() {
 				</div>
 
 				<div>
-					<h2>Mongo Query Preview</h2>
-
-					<pre
-						style={{
-							background: "#111",
-							color: "#0f0",
-							padding: 16,
-							borderRadius: 8,
-							overflow: "auto",
-						}}
-					>
-						{JSON.stringify(compiledQuery, null, 2)}
-					</pre>
+					<h2>Query Preview</h2>
+					<QueryPreviewPanel />
 				</div>
 			</div>
+
 			<div style={{ color: "red" }}>
 				{errors.map((e, i) => (
 					<div key={i}>{e}</div>
