@@ -38,10 +38,41 @@ export default function Page() {
 				</div>
 			</div>
 
-			<div style={{ color: "red" }}>
-				{errors.map((e, i) => (
-					<div key={i}>{e}</div>
-				))}
+			<div
+				style={{
+					marginTop: 16,
+					padding: 12,
+					background: "#1a1a1a",
+					border: "1px solid #333",
+					borderRadius: 8,
+				}}
+			>
+				<h3 style={{ color: "#ff4d4f" }}>
+					Validation Issues ({errors.length})
+				</h3>
+
+				{errors.length === 0 ? (
+					<div style={{ color: "#0f0" }}>All queries valid</div>
+				) : (
+					<div style={{ marginTop: 8 }}>
+						{errors.map((e, i) => {
+							const isGroup = e.includes("Group");
+
+							return (
+								<div
+									key={i}
+									style={{
+										color: isGroup ? "#ffa940" : "#ff4d4f",
+										marginBottom: 4,
+										fontSize: 13,
+									}}
+								>
+									{isGroup ? `[Group] ${e}` : `[Rule] ${e}`}
+								</div>
+							);
+						})}
+					</div>
+				)}
 			</div>
 		</div>
 	);
