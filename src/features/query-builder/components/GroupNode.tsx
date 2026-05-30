@@ -1,6 +1,8 @@
 import { GroupNode as GroupType } from "@/core/query/types";
 import { useQueryStore } from "@/state/queryStore";
 import CollapsibleGroup from "./ui/CollapsibleGroup";
+import SortableGroup from "../dnd/SortableGroup";
+import QueryBuilderDnd from "../dnd/QueryBuilderDnd";
 
 type Props = {
 	node: GroupType;
@@ -11,9 +13,30 @@ export default function GroupNode({ node, children }: Props) {
 	const addRule = useQueryStore((s) => s.addRule);
 	const addGroup = useQueryStore((s) => s.addGroup);
 	const deleteNode = useQueryStore((s) => s.deleteNode);
+	const updateNode = useQueryStore((s) => s.updateNode);
 
 	return (
-		<CollapsibleGroup title={<div>Group: {node.logic}</div>}>
+		<CollapsibleGroup 
+			title={
+				<div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+					<span>Group:</span>
+					<select
+						value={node.logic}
+						onChange={(e) =>
+							updateNode(node.id, (current) =>
+								current.type === "group"
+									? { ...current, logic: e.target.value as any }
+									: current,
+							)
+						}
+						onClick={(e) => e.stopPropagation()}
+					>
+						<option value="AND">AND</option>
+						<option value="OR">OR</option>
+					</select>
+				</div>
+			}
+		>
 			<div
 				style={{
 					display: "flex",
@@ -28,7 +51,20 @@ export default function GroupNode({ node, children }: Props) {
 				<button onClick={() => deleteNode(node.id)}>Delete</button>
 			</div>
 
-			<div style={{ paddingLeft: 12 }}>{children}</div>
+			<QueryBuilderDnd
+				parentId={node.id}
+				childIds={node.children.map((child) => child.id)}
+			>
+				<SortableGroup items={node.children.map((child) => child.id)}>
+					<div
+						style={{
+							paddingLeft: 12,
+						}}
+					>
+						{children}
+					</div>
+				</SortableGroup>
+			</QueryBuilderDnd>
 		</CollapsibleGroup>
 	);
 }

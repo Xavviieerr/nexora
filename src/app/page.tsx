@@ -9,7 +9,8 @@ import QueryPreviewPanel from "@/features/query-preview/components/QueryPreviewP
 
 export default function Page() {
 	const tree = useQueryStore((s) => s.tree);
-	const errors = validateTree(tree);
+	const schema = useQueryStore((s) => s.schema);
+	const errors = validateTree(tree, schema);
 
 	return (
 		<div style={{ padding: 20 }}>
@@ -25,7 +26,7 @@ export default function Page() {
 				<div>
 					<h2>Query Builder</h2>
 
-					<NodeRenderer node={tree} />
+					<NodeRenderer node={tree} isRoot={true} />
 					<ExecutionPanel />
 				</div>
 
