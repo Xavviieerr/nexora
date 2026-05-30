@@ -4,6 +4,7 @@ import { createGroupNode, createRuleNode } from "@/core/query/createNode";
 import { updateNode as updateTree } from "@/core/query/updateNode";
 import { deleteNode as deleteTree } from "@/core/query/deleteNode";
 import { defaultSchema, Schema } from "@/core/schema/schema";
+import { reorderNode } from "@/core/query/reorderNode";
 
 type QueryStore = {
 	tree: Node;
@@ -14,6 +15,12 @@ type QueryStore = {
 
 	updateNode: (id: string, updater: (node: Node) => Node) => void;
 	deleteNode: (id: string) => void;
+
+	reorderChildren: (
+		parentId: string,
+		fromIndex: number,
+		toIndex: number,
+	) => void;
 
 	setTree: (tree: Node) => void;
 };
@@ -62,5 +69,13 @@ export const useQueryStore = create<QueryStore>((set, get) => ({
 	deleteNode: (id) => {
 		const updated = deleteTree(get().tree, id);
 		set({ tree: updated ?? createGroupNode() });
+	},
+
+	reorderChildren: (parentId, fromIndex, toIndex) => {
+		const updated = reorderNode(get().tree, parentId, fromIndex, toIndex);
+
+		set({
+			tree: updated,
+		});
 	},
 }));
