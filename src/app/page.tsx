@@ -38,40 +38,17 @@ export default function Page() {
 				</div>
 			</div>
 
-			<div
-				style={{
-					marginTop: 16,
-					padding: 12,
-					background: "#1a1a1a",
-					border: "1px solid #333",
-					borderRadius: 8,
-				}}
-			>
-				<h3 style={{ color: "#ff4d4f" }}>
-					Validation Issues ({errors.length})
-				</h3>
+			<div style={{ color: "red", marginTop: 16 }}>
+				<h3>Validation Issues ({errors.length})</h3>
 
 				{errors.length === 0 ? (
-					<div style={{ color: "#0f0" }}>All queries valid</div>
+					<div style={{ color: "green" }}>All queries valid</div>
 				) : (
-					<div style={{ marginTop: 8 }}>
-						{errors.map((e, i) => {
-							const isGroup = e.includes("Group");
-
-							return (
-								<div
-									key={i}
-									style={{
-										color: isGroup ? "#ffa940" : "#ff4d4f",
-										marginBottom: 4,
-										fontSize: 13,
-									}}
-								>
-									{isGroup ? `[Group] ${e}` : `[Rule] ${e}`}
-								</div>
-							);
-						})}
-					</div>
+					errors.map((err, i) => (
+						<div key={i}>
+							[{err.nodeId}] {err.message}
+						</div>
+					))
 				)}
 			</div>
 		</div>
