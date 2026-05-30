@@ -8,6 +8,10 @@ export function validateTree(node: Node, schema: Schema): string[] {
 	errors = errors.concat(validateNode(node, schema));
 
 	if (node.type === "group") {
+		if (node.children.length === 0) {
+			errors.push(`Group ${node.id} cannot be empty`);
+		}
+
 		node.children.forEach((child) => {
 			errors = errors.concat(validateTree(child, schema));
 		});
