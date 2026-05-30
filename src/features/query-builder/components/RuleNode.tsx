@@ -31,13 +31,18 @@ export default function RuleNode({ node }: Props) {
 			{/* FIELD SELECT (schema-driven) */}
 			<select
 				value={node.field}
-				onChange={(e) =>
+				onChange={(e) => {
+					const newField = e.target.value;
+					const newFieldDef = schema.fields.find((f) => f.name === newField);
+					const newOperators = newFieldDef ? operatorMatrix[newFieldDef.type] : [];
+					const newOperator = newOperators.length > 0 ? newOperators[0] : "eq";
+
 					updateNode(node.id, (current) =>
 						current.type === "rule"
-							? { ...current, field: e.target.value }
+							? { ...current, field: newField, operator: newOperator as any, value: "" }
 							: current,
 					)
-				}
+				}}
 			>
 				<option value="">Select field</option>
 				{schema.fields.map((f) => (
@@ -69,17 +74,36 @@ export default function RuleNode({ node }: Props) {
 			</select>
 
 			{/* VALUE INPUT (schema-aware type inference) */}
-			<input
-				type={fieldDef ? inferInputType(fieldDef.type) : "text"}
-				placeholder="value"
-				value={node.value}
-				onChange={(e) =>
-					updateNode(node.id, (current) => ({
-						...current,
-						value: e.target.value,
-					}))
-				}
-			/>
+			{fieldDef?.type === "enum" ? (
+				<select
+					value={node.value}
+					onChange={(e) =>
+						updateNode(node.id, (current) => ({
+							...current,
+							value: e.target.value,
+						}))
+					}
+				>
+					<option value="">Select value</option>
+					{fieldDef.options?.map((opt) => (
+						<option key={opt} value={opt}>
+							{opt}
+						</option>
+					))}
+				</select>
+			) : (
+				<input
+					type={fieldDef ? inferInputType(fieldDef.type) : "text"}
+					placeholder="value"
+					value={node.value}
+					onChange={(e) =>
+						updateNode(node.id, (current) => ({
+							...current,
+							value: e.target.value,
+						}))
+					}
+				/>
+			)}
 
 			<button onClick={() => deleteNode(node.id)}>Delete</button>
 		</div>

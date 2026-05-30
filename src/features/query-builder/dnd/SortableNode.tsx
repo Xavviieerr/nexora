@@ -20,8 +20,22 @@ export default function SortableNode({ id, children }: Props) {
 	};
 
 	return (
-		<div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-			{children}
+		<div ref={setNodeRef} style={{ ...style, display: "flex", alignItems: "flex-start", gap: "8px" }} {...attributes}>
+			<div 
+				{...listeners} 
+				style={{ 
+					cursor: "grab", 
+					padding: "8px", 
+					marginTop: "4px",
+					color: "#888",
+					userSelect: "none"
+				}}
+			>
+				⠿
+			</div>
+			<div style={{ flex: 1, minWidth: 0 }}>
+				{children}
+			</div>
 		</div>
 	);
 }

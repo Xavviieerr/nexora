@@ -13,9 +13,30 @@ export default function GroupNode({ node, children }: Props) {
 	const addRule = useQueryStore((s) => s.addRule);
 	const addGroup = useQueryStore((s) => s.addGroup);
 	const deleteNode = useQueryStore((s) => s.deleteNode);
+	const updateNode = useQueryStore((s) => s.updateNode);
 
 	return (
-		<CollapsibleGroup title={<div>Group: {node.logic}</div>}>
+		<CollapsibleGroup 
+			title={
+				<div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+					<span>Group:</span>
+					<select
+						value={node.logic}
+						onChange={(e) =>
+							updateNode(node.id, (current) =>
+								current.type === "group"
+									? { ...current, logic: e.target.value as any }
+									: current,
+							)
+						}
+						onClick={(e) => e.stopPropagation()}
+					>
+						<option value="AND">AND</option>
+						<option value="OR">OR</option>
+					</select>
+				</div>
+			}
+		>
 			<div
 				style={{
 					display: "flex",

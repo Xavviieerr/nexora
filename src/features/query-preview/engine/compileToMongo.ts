@@ -33,6 +33,10 @@ export function compileToMongo(node: Node): any {
 		}
 	}
 
+	if (node.children.length === 0) {
+		return {};
+	}
+
 	const children = node.children.map(compileToMongo);
 
 	if (node.logic === "AND") {
