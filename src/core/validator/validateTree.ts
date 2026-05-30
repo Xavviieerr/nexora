@@ -1,8 +1,8 @@
 import { Node } from "@/core/query/types";
-import { validateNode } from "./validateNode";
 import { Schema } from "@/core/schema/schema";
+import { validateNode } from "./validateNode";
 
-export function validateTree(node: Node, schema?: Schema): string[] {
+export function validateTree(node: Node, schema: Schema): string[] {
 	let errors: string[] = [];
 
 	errors = errors.concat(validateNode(node, schema));
