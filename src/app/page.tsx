@@ -6,6 +6,7 @@ import { validateTree } from "@/core/validator/validateTree";
 
 import ExecutionPanel from "@/features/query-execution/components/ExecutionPanel";
 import QueryPreviewPanel from "@/features/query-preview/components/QueryPreviewPanel";
+import HistoryPanel from "@/features/query-history/components/HistoryPanel";
 
 export default function Page() {
 	const tree = useQueryStore((s) => s.tree);
@@ -33,6 +34,7 @@ export default function Page() {
 				<div>
 					<h2>Query Preview</h2>
 					<QueryPreviewPanel />
+					<HistoryPanel />
 				</div>
 			</div>
 
