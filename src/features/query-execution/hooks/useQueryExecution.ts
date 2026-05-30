@@ -1,27 +1,28 @@
-import { useState } from "react";
 import { executeQuery } from "../engine/executeQuery";
 import { users } from "../mock/users";
 import { useQueryStore } from "@/state/queryStore";
+import { useExecutionStore } from "../store/executionStore";
 
 export function useQueryExecution() {
 	const tree = useQueryStore((s) => s.tree);
-
-	const [loading, setLoading] = useState(false);
-	const [results, setResults] = useState<any[]>([]);
+	const isRunning = useExecutionStore((s) => s.isRunning);
+	const results = useExecutionStore((s) => s.results);
+	const setRunning = useExecutionStore((s) => s.setRunning);
+	const setResults = useExecutionStore((s) => s.setResults);
 
 	const runQuery = async () => {
-		setLoading(true);
+		setRunning(true);
 
 		await new Promise((resolve) => setTimeout(resolve, 400));
 
 		const matches = executeQuery(tree, users);
 
 		setResults(matches);
-		setLoading(false);
+		setRunning(false);
 	};
 
 	return {
-		loading,
+		loading: isRunning,
 		results,
 		runQuery,
 	};
