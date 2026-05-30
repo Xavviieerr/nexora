@@ -4,6 +4,7 @@ import NodeRenderer from "@/features/query-builder/components/NodeRenderer";
 import { useQueryStore } from "@/state/queryStore";
 import { compileMongo } from "@/core/compiler/compileMongo";
 import { validateTree } from "@/core/validator/validateTree";
+import ExecutionPanel from "@/features/query-execution/components/ExecutionPanel";
 
 export default function Page() {
 	const tree = useQueryStore((s) => s.tree);
@@ -25,6 +26,7 @@ export default function Page() {
 					<h2>Query Builder</h2>
 
 					<NodeRenderer node={tree} />
+					<ExecutionPanel />
 				</div>
 
 				<div>
