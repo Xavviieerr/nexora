@@ -1,5 +1,7 @@
 import { RuleNode as RuleType } from "@/core/query/types";
 import { useQueryStore } from "@/state/queryStore";
+import { operatorMatrix } from "@/core/schema/operatorMatrix";
+import { inferInputType } from "@/core/schema/inferInputType";
 
 type Props = {
 	node: RuleType;
@@ -8,6 +10,11 @@ type Props = {
 export default function RuleNode({ node }: Props) {
 	const updateNode = useQueryStore((s) => s.updateNode);
 	const deleteNode = useQueryStore((s) => s.deleteNode);
+	const schema = useQueryStore((s) => s.schema);
+
+	const fieldDef = schema.fields.find((f) => f.name === node.field);
+
+	const availableOperators = fieldDef ? operatorMatrix[fieldDef.type] : [];
 
 	return (
 		<div
@@ -21,17 +28,26 @@ export default function RuleNode({ node }: Props) {
 				flexWrap: "wrap",
 			}}
 		>
-			<input
-				placeholder="field"
+			{/* FIELD SELECT (schema-driven) */}
+			<select
 				value={node.field}
 				onChange={(e) =>
-					updateNode(node.id, (current) => ({
-						...current,
-						field: e.target.value,
-					}))
+					updateNode(node.id, (current) =>
+						current.type === "rule"
+							? { ...current, field: e.target.value }
+							: current,
+					)
 				}
-			/>
+			>
+				<option value="">Select field</option>
+				{schema.fields.map((f) => (
+					<option key={f.name} value={f.name}>
+						{f.name}
+					</option>
+				))}
+			</select>
 
+			{/* OPERATOR SELECT (schema-driven) */}
 			<select
 				value={node.operator}
 				onChange={(e) =>
@@ -39,21 +55,24 @@ export default function RuleNode({ node }: Props) {
 						current.type === "rule"
 							? {
 									...current,
-									operator: e.target.value as RuleType["operator"],
+									operator: e.target.value as any,
 								}
 							: current,
 					)
 				}
 			>
-				<option value="eq">equals</option>
-				<option value="gt">greater than</option>
-				<option value="lt">less than</option>
-				<option value="contains">contains</option>
+				{availableOperators.map((op) => (
+					<option key={op} value={op}>
+						{op}
+					</option>
+				))}
 			</select>
 
+			{/* VALUE INPUT (schema-aware type inference) */}
 			<input
+				type={fieldDef ? inferInputType(fieldDef.type) : "text"}
 				placeholder="value"
-				value={String(node.value)}
+				value={node.value}
 				onChange={(e) =>
 					updateNode(node.id, (current) => ({
 						...current,
