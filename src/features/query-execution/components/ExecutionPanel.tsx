@@ -20,7 +20,7 @@ export default function ExecutionPanel() {
 
 			<ResultsSummary count={results.length} />
 
-			<ResultsTable rows={results} />
+			<ResultsTable />
 		</div>
 	);
 }
