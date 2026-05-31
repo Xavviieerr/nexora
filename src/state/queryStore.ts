@@ -5,14 +5,20 @@ import { updateNode as updateTree } from "@/core/query/updateNode";
 import { deleteNode as deleteTree } from "@/core/query/deleteNode";
 import { defaultSchema, Schema } from "@/core/schema/schema";
 import { reorderNode } from "@/core/query/reorderNode";
-import { importQuery } from "@/features/query-io/import/importQuery";
-import { exportQuery } from "@/features/query-io/export/exportQuery";
+
+type HistoryState = {
+	past: Node[];
+	present: Node;
+	future: Node[];
+};
 
 type QueryStore = {
 	tree: Node;
 	schema: Schema;
-	exportQuery: () => string;
-	importQuery: (json: string) => void;
+
+	// history core
+	past: Node[];
+	future: Node[];
 
 	addRule: (parentId: string) => void;
 	addGroup: (parentId: string) => void;
@@ -26,14 +32,36 @@ type QueryStore = {
 		toIndex: number,
 	) => void;
 
+	// undo/redo
+	undo: () => void;
+	redo: () => void;
+
 	setTree: (tree: Node) => void;
 };
 
+function pushHistory(state: QueryStore, newTree: Node): QueryStore {
+	return {
+		...state,
+		past: [...state.past, state.tree],
+		tree: newTree,
+		future: [],
+	};
+}
+
 export const useQueryStore = create<QueryStore>((set, get) => ({
-	tree: createGroupNode("root"),
+	tree: createGroupNode(),
 	schema: defaultSchema,
 
-	setTree: (tree) => set({ tree }),
+	past: [],
+	future: [],
+
+	setTree: (tree) =>
+		set((state) => ({
+			...state,
+			past: [...state.past, state.tree],
+			tree,
+			future: [],
+		})),
 
 	addRule: (parentId) => {
 		const newRule = createRuleNode();
@@ -47,7 +75,7 @@ export const useQueryStore = create<QueryStore>((set, get) => ({
 			};
 		});
 
-		set({ tree: updated });
+		set((state) => pushHistory(state, updated));
 	},
 
 	addGroup: (parentId) => {
@@ -62,32 +90,50 @@ export const useQueryStore = create<QueryStore>((set, get) => ({
 			};
 		});
 
-		set({ tree: updated });
+		set((state) => pushHistory(state, updated));
 	},
 
 	updateNode: (id, updater) => {
 		const updated = updateTree(get().tree, id, updater);
-		set({ tree: updated });
+		set((state) => pushHistory(state, updated));
 	},
 
 	deleteNode: (id) => {
 		const updated = deleteTree(get().tree, id);
-		set({ tree: updated ?? createGroupNode("root") });
+		set((state) => pushHistory(state, updated ?? createGroupNode()));
 	},
 
 	reorderChildren: (parentId, fromIndex, toIndex) => {
 		const updated = reorderNode(get().tree, parentId, fromIndex, toIndex);
 
-		set({
-			tree: updated,
-		});
-	},
-	exportQuery: () => {
-		return exportQuery(get().tree);
+		set((state) => pushHistory(state, updated));
 	},
 
-	importQuery: (json: string) => {
-		const tree = importQuery(json);
-		set({ tree });
+	undo: () => {
+		const state = get();
+		if (state.past.length === 0) return;
+
+		const previous = state.past[state.past.length - 1];
+		const newPast = state.past.slice(0, -1);
+
+		set({
+			tree: previous,
+			past: newPast,
+			future: [state.tree, ...state.future],
+		});
+	},
+
+	redo: () => {
+		const state = get();
+		if (state.future.length === 0) return;
+
+		const next = state.future[0];
+		const newFuture = state.future.slice(1);
+
+		set({
+			tree: next,
+			past: [...state.past, state.tree],
+			future: newFuture,
+		});
 	},
 }));
