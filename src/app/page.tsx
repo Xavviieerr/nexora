@@ -7,14 +7,21 @@ import { validateTree } from "@/core/validator/validateTree";
 import ExecutionPanel from "@/features/query-execution/components/ExecutionPanel";
 import QueryPreviewPanel from "@/features/query-preview/components/QueryPreviewPanel";
 import HistoryPanel from "@/features/query-history/components/HistoryPanel";
-import ExportButton from "@/features/query-io/components/ExportButton";
-import ImportButton from "@/features/query-io/components/ImportButton";
 import SaveQueryButton from "@/features/query-history/components/SaveQueryButton";
 
 export default function Page() {
 	const tree = useQueryStore((s) => s.tree);
 	const schema = useQueryStore((s) => s.schema);
+
 	const errors = validateTree(tree, schema);
+
+	const errorMap = new Map();
+
+	errors.forEach((error) => {
+		const existing = errorMap.get(error.nodeId) ?? [];
+
+		errorMap.set(error.nodeId, [...existing, error]);
+	});
 
 	return (
 		<div style={{ padding: 20 }}>
@@ -30,21 +37,27 @@ export default function Page() {
 				<div>
 					<h2>Query Builder</h2>
 
-					<NodeRenderer node={tree} />
+					<div
+						style={{
+							display: "flex",
+							gap: 10,
+							marginBottom: 16,
+						}}
+					>
+						<SaveQueryButton />
+					</div>
+
+					<NodeRenderer node={tree} errorMap={errorMap} />
+
 					<ExecutionPanel />
 				</div>
 
 				<div>
 					<h2>Query Preview</h2>
+
 					<QueryPreviewPanel />
+
 					<HistoryPanel />
-				</div>
-				<div style={{ display: "flex", gap: 10 }}>
-					<SaveQueryButton />
-				</div>
-				<div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
-					<ExportButton />
-					<ImportButton />
 				</div>
 			</div>
 
