@@ -10,9 +10,9 @@ export function createRuleNode(): RuleNode {
 	};
 }
 
-export function createGroupNode(): GroupNode {
+export function createGroupNode(id?: string): GroupNode {
 	return {
-		id: crypto.randomUUID(),
+		id: id ?? crypto.randomUUID(),
 		type: "group",
 		logic: "AND",
 		children: [],

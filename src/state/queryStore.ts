@@ -30,7 +30,7 @@ type QueryStore = {
 };
 
 export const useQueryStore = create<QueryStore>((set, get) => ({
-	tree: createGroupNode(),
+	tree: createGroupNode("root"),
 	schema: defaultSchema,
 
 	setTree: (tree) => set({ tree }),
@@ -72,7 +72,7 @@ export const useQueryStore = create<QueryStore>((set, get) => ({
 
 	deleteNode: (id) => {
 		const updated = deleteTree(get().tree, id);
-		set({ tree: updated ?? createGroupNode() });
+		set({ tree: updated ?? createGroupNode("root") });
 	},
 
 	reorderChildren: (parentId, fromIndex, toIndex) => {
