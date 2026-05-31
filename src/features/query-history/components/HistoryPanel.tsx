@@ -1,26 +1,34 @@
 "use client";
 
-import { useHistoryStore } from "../store/historyStore";
-import HistoryItem from "./HistoryItem";
+import { useQueryHistory } from "../hooks/useQueryHistory";
 
 export default function HistoryPanel() {
-	const items = useHistoryStore((s) => s.items);
+	const { saveSnapshot, history, restore, currentIndex, undo, redo } =
+		useQueryHistory();
 
 	return (
-		<div
-			style={{
-				marginTop: 20,
-				padding: 12,
-				borderTop: "1px solid #222",
-			}}
-		>
-			<h3>Query History</h3>
+		<div style={{ marginTop: 20 }}>
+			<h3>History</h3>
 
-			{items.length === 0 ? (
-				<div style={{ fontSize: 12 }}>No saved queries</div>
-			) : (
-				items.map((item) => <HistoryItem key={item.id} item={item} />)
-			)}
+			<button onClick={saveSnapshot}>Save Snapshot</button>
+
+			<button onClick={undo}>Undo</button>
+			<button onClick={redo}>Redo</button>
+
+			<ul>
+				{history.map((_, i) => (
+					<li key={i}>
+						<button
+							onClick={() => restore(i)}
+							style={{
+								fontWeight: i === currentIndex ? "bold" : "normal",
+							}}
+						>
+							Snapshot {i + 1}
+						</button>
+					</li>
+				))}
+			</ul>
 		</div>
 	);
 }

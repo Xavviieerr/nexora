@@ -1,50 +1,56 @@
 import { create } from "zustand";
 import { Node } from "@/core/query/types";
 
-export type HistoryItem = {
-	id: string;
-	label: string;
-	timestamp: number;
-	tree: Node;
-};
-
 type HistoryStore = {
-	items: HistoryItem[];
+	history: Node[];
+	currentIndex: number;
 
-	addToHistory: (tree: Node) => void;
-	removeFromHistory: (id: string) => void;
-	clearHistory: () => void;
-	restoreFromHistory: (item: HistoryItem) => void;
+	save: (tree: Node) => void;
+	undo: () => void;
+	redo: () => void;
+	goTo: (index: number) => void;
 };
 
-export const useHistoryStore = create<HistoryStore>((set) => ({
-	items: [],
+export const useHistoryStore = create<HistoryStore>((set, get) => ({
+	history: [],
+	currentIndex: -1,
 
-	addToHistory: (tree) => {
-		const item: HistoryItem = {
-			id: crypto.randomUUID(),
-			label: "Saved Query",
-			timestamp: Date.now(),
-			tree,
-		};
+	save: (tree) => {
+		const state = get();
 
-		set((state) => ({
-			items: [item, ...state.items],
-		}));
+		const newHistory = state.history.slice(0, state.currentIndex + 1);
+
+		newHistory.push(structuredClone(tree));
+
+		set({
+			history: newHistory,
+			currentIndex: newHistory.length - 1,
+		});
 	},
 
-	removeFromHistory: (id) => {
-		set((state) => ({
-			items: state.items.filter((i) => i.id !== id),
-		}));
+	undo: () => {
+		const state = get();
+
+		if (state.currentIndex <= 0) return;
+
+		const newIndex = state.currentIndex - 1;
+
+		set({
+			currentIndex: newIndex,
+		});
 	},
 
-	clearHistory: () => set({ items: [] }),
+	redo: () => {
+		const state = get();
 
-	restoreFromHistory: (item) => {
-		// NOTE: UI wiring happens in next commits
-		set(() => ({
-			items: useHistoryStore.getState().items,
-		}));
+		if (state.currentIndex >= state.history.length - 1) return;
+
+		set({
+			currentIndex: state.currentIndex + 1,
+		});
+	},
+
+	goTo: (index) => {
+		set({ currentIndex: index });
 	},
 }));
