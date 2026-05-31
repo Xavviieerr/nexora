@@ -5,10 +5,14 @@ import { updateNode as updateTree } from "@/core/query/updateNode";
 import { deleteNode as deleteTree } from "@/core/query/deleteNode";
 import { defaultSchema, Schema } from "@/core/schema/schema";
 import { reorderNode } from "@/core/query/reorderNode";
+import { importQuery } from "@/features/query-io/import/importQuery";
+import { exportQuery } from "@/features/query-io/export/exportQuery";
 
 type QueryStore = {
 	tree: Node;
 	schema: Schema;
+	exportQuery: () => string;
+	importQuery: (json: string) => void;
 
 	addRule: (parentId: string) => void;
 	addGroup: (parentId: string) => void;
@@ -77,5 +81,13 @@ export const useQueryStore = create<QueryStore>((set, get) => ({
 		set({
 			tree: updated,
 		});
+	},
+	exportQuery: () => {
+		return exportQuery(get().tree);
+	},
+
+	importQuery: (json: string) => {
+		const tree = importQuery(json);
+		set({ tree });
 	},
 }));

@@ -7,6 +7,8 @@ import { validateTree } from "@/core/validator/validateTree";
 import ExecutionPanel from "@/features/query-execution/components/ExecutionPanel";
 import QueryPreviewPanel from "@/features/query-preview/components/QueryPreviewPanel";
 import HistoryPanel from "@/features/query-history/components/HistoryPanel";
+import ExportButton from "@/features/query-io/components/ExportButton";
+import ImportButton from "@/features/query-io/components/ImportButton";
 
 export default function Page() {
 	const tree = useQueryStore((s) => s.tree);
@@ -27,7 +29,7 @@ export default function Page() {
 				<div>
 					<h2>Query Builder</h2>
 
-					<NodeRenderer node={tree} isRoot={true} />
+					<NodeRenderer node={tree} />
 					<ExecutionPanel />
 				</div>
 
@@ -35,6 +37,10 @@ export default function Page() {
 					<h2>Query Preview</h2>
 					<QueryPreviewPanel />
 					<HistoryPanel />
+				</div>
+				<div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+					<ExportButton />
+					<ImportButton />
 				</div>
 			</div>
 
