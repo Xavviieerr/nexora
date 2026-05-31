@@ -8,6 +8,7 @@ import ExecutionPanel from "@/features/query-execution/components/ExecutionPanel
 import QueryPreviewPanel from "@/features/query-preview/components/QueryPreviewPanel";
 import HistoryPanel from "@/features/query-history/components/HistoryPanel";
 import SaveQueryButton from "@/features/query-history/components/SaveQueryButton";
+import ImportExportPanel from "@/features/query-import-export/components/ImportExportPanel";
 
 export default function Page() {
 	const tree = useQueryStore((s) => s.tree);
@@ -47,7 +48,7 @@ export default function Page() {
 						<SaveQueryButton />
 					</div>
 
-					<NodeRenderer node={tree} errorMap={errorMap} />
+					<NodeRenderer node={tree} />
 
 					<ExecutionPanel />
 				</div>
@@ -60,7 +61,7 @@ export default function Page() {
 					<HistoryPanel />
 				</div>
 			</div>
-
+			<ImportExportPanel />
 			<div style={{ color: "red", marginTop: 16 }}>
 				<h3>Validation Issues ({errors.length})</h3>
 
