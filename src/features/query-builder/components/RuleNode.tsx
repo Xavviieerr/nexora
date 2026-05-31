@@ -26,7 +26,8 @@ function RuleNodeBase({ node }: Props) {
 				gap: 10,
 				alignItems: "center",
 				flexWrap: "wrap",
-				willChange: "transform",
+				borderRadius: 6,
+				transition: "background 120ms ease, border 120ms ease",
 			}}
 		>
 			<select
