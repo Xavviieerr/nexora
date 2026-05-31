@@ -1,56 +1,50 @@
 import { create } from "zustand";
 import { Node } from "@/core/query/types";
 
-type HistoryStore = {
-	history: Node[];
-	currentIndex: number;
-
-	save: (tree: Node) => void;
-	undo: () => void;
-	redo: () => void;
-	goTo: (index: number) => void;
+export type HistoryItem = {
+	id: string;
+	label: string;
+	timestamp: number;
+	tree: Node;
 };
 
-export const useHistoryStore = create<HistoryStore>((set, get) => ({
-	history: [],
-	currentIndex: -1,
+type HistoryStore = {
+	items: HistoryItem[];
 
-	save: (tree) => {
-		const state = get();
+	addToHistory: (tree: Node) => void;
+	removeFromHistory: (id: string) => void;
+	clearHistory: () => void;
+	restoreFromHistory: (item: HistoryItem) => void;
+};
 
-		const newHistory = state.history.slice(0, state.currentIndex + 1);
+export const useHistoryStore = create<HistoryStore>((set) => ({
+	items: [],
 
-		newHistory.push(structuredClone(tree));
+	addToHistory: (tree) => {
+		const item: HistoryItem = {
+			id: crypto.randomUUID(),
+			label: "Saved Query",
+			timestamp: Date.now(),
+			tree,
+		};
 
-		set({
-			history: newHistory,
-			currentIndex: newHistory.length - 1,
-		});
+		set((state) => ({
+			items: [item, ...state.items],
+		}));
 	},
 
-	undo: () => {
-		const state = get();
-
-		if (state.currentIndex <= 0) return;
-
-		const newIndex = state.currentIndex - 1;
-
-		set({
-			currentIndex: newIndex,
-		});
+	removeFromHistory: (id) => {
+		set((state) => ({
+			items: state.items.filter((i) => i.id !== id),
+		}));
 	},
 
-	redo: () => {
-		const state = get();
+	clearHistory: () => set({ items: [] }),
 
-		if (state.currentIndex >= state.history.length - 1) return;
-
-		set({
-			currentIndex: state.currentIndex + 1,
-		});
-	},
-
-	goTo: (index) => {
-		set({ currentIndex: index });
+	restoreFromHistory: (item) => {
+		// NOTE: UI wiring happens in next commits
+		set(() => ({
+			items: useHistoryStore.getState().items,
+		}));
 	},
 }));
