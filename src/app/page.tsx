@@ -38,10 +38,18 @@ export default function Page() {
 				</div>
 			</div>
 
-			<div style={{ color: "red" }}>
-				{errors.map((e, i) => (
-					<div key={i}>{e}</div>
-				))}
+			<div style={{ color: "red", marginTop: 16 }}>
+				<h3>Validation Issues ({errors.length})</h3>
+
+				{errors.length === 0 ? (
+					<div style={{ color: "green" }}>All queries valid</div>
+				) : (
+					errors.map((err, i) => (
+						<div key={i}>
+							[{err.nodeId}] {err.message}
+						</div>
+					))
+				)}
 			</div>
 		</div>
 	);

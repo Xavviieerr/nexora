@@ -1,39 +1,47 @@
 import { Node } from "@/core/query/types";
-import { operatorMatrix } from "@/core/schema/operatorMatrix";
 import { Schema } from "@/core/schema/schema";
+import { operatorMatrix } from "@/core/schema/operatorMatrix";
+import { ValidationError } from "./types";
 
-export function validateNode(node: Node, schema?: Schema): string[] {
-	if (node.type !== "rule") return [];
+export function validateNode(node: Node, schema: Schema): ValidationError[] {
+	if (node.type !== "rule") {
+		return [];
+	}
 
-	const errors: string[] = [];
+	const errors: ValidationError[] = [];
 
 	if (!node.field) {
-		errors.push("Missing field");
+		errors.push({
+			nodeId: node.id,
+			message: "Missing field",
+		});
 		return errors;
 	}
 
-	if (!node.operator) {
-		errors.push("Missing operator");
+	const field = schema.fields.find((f) => f.name === node.field);
+
+	if (!field) {
+		errors.push({
+			nodeId: node.id,
+			message: `Unknown field: ${node.field}`,
+		});
 		return errors;
 	}
 
-	const fieldDef = schema?.fields.find((f) => f.name === node.field);
-
-	if (!fieldDef) {
-		errors.push(`Field "${node.field}" not found in schema`);
-		return errors;
-	}
-
-	const allowedOperators = operatorMatrix[fieldDef.type];
+	const allowedOperators = operatorMatrix[field.type];
 
 	if (!allowedOperators.includes(node.operator)) {
-		errors.push(
-			`Operator "${node.operator}" not allowed for type "${fieldDef.type}"`,
-		);
+		errors.push({
+			nodeId: node.id,
+			message: `Invalid operator ${node.operator} for ${node.field}`,
+		});
 	}
 
-	if (node.value === "" || node.value === null || node.value === undefined) {
-		errors.push("Missing value");
+	if (node.value === "" || node.value === null) {
+		errors.push({
+			nodeId: node.id,
+			message: "Missing value",
+		});
 	}
 
 	return errors;
