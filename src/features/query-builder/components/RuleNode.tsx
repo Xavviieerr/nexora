@@ -2,12 +2,14 @@ import { RuleNode as RuleType } from "@/core/query/types";
 import { useQueryStore } from "@/state/queryStore";
 import { operatorMatrix } from "@/core/schema/operatorMatrix";
 import { inferInputType } from "@/core/schema/inferInputType";
+import { ValidationError } from "@/core/validator/types";
 
 type Props = {
 	node: RuleType;
+	errors?: ValidationError[];
 };
 
-export default function RuleNode({ node }: Props) {
+export default function RuleNode({ node, errors = [] }: Props) {
 	const updateNode = useQueryStore((s) => s.updateNode);
 	const deleteNode = useQueryStore((s) => s.deleteNode);
 	const schema = useQueryStore((s) => s.schema);
@@ -16,35 +18,49 @@ export default function RuleNode({ node }: Props) {
 
 	const availableOperators = fieldDef ? operatorMatrix[fieldDef.type] : [];
 
+	const hasErrors = errors.length > 0;
+
 	return (
 		<div
 			style={{
-				border: "1px solid gray",
+				border: hasErrors ? "2px solid red" : "1px solid gray",
+				background: hasErrors ? "rgba(255,0,0,0.05)" : "transparent",
 				margin: 5,
 				padding: 10,
 				display: "flex",
 				gap: 10,
 				alignItems: "center",
 				flexWrap: "wrap",
+				borderRadius: 6,
 			}}
 		>
-			{/* FIELD SELECT (schema-driven) */}
 			<select
 				value={node.field}
 				onChange={(e) => {
 					const newField = e.target.value;
+
 					const newFieldDef = schema.fields.find((f) => f.name === newField);
-					const newOperators = newFieldDef ? operatorMatrix[newFieldDef.type] : [];
+
+					const newOperators = newFieldDef
+						? operatorMatrix[newFieldDef.type]
+						: [];
+
 					const newOperator = newOperators.length > 0 ? newOperators[0] : "eq";
 
 					updateNode(node.id, (current) =>
 						current.type === "rule"
-							? { ...current, field: newField, operator: newOperator as any, value: "" }
+							? {
+									...current,
+									field: newField,
+									operator: newOperator as any,
+									value: "",
+								}
 							: current,
-					)
+					);
 				}}
 			>
 				<option value="">Select field</option>
+
 				{schema.fields.map((f) => (
 					<option key={f.name} value={f.name}>
 						{f.name}
@@ -52,7 +68,6 @@ export default function RuleNode({ node }: Props) {
 				))}
 			</select>
 
-			{/* OPERATOR SELECT (schema-driven) */}
 			<select
 				value={node.operator}
 				onChange={(e) =>
@@ -73,7 +88,6 @@ export default function RuleNode({ node }: Props) {
 				))}
 			</select>
 
-			{/* VALUE INPUT (schema-aware type inference) */}
 			{fieldDef?.type === "enum" ? (
 				<select
 					value={node.value}
@@ -85,6 +99,7 @@ export default function RuleNode({ node }: Props) {
 					}
 				>
 					<option value="">Select value</option>
+
 					{fieldDef.options?.map((opt) => (
 						<option key={opt} value={opt}>
 							{opt}
@@ -106,6 +121,19 @@ export default function RuleNode({ node }: Props) {
 			)}
 
 			<button onClick={() => deleteNode(node.id)}>Delete</button>
+
+			{hasErrors && (
+				<div
+					style={{
+						color: "red",
+						fontSize: 12,
+						fontWeight: 600,
+					}}
+				>
+					{errors.length} error
+					{errors.length > 1 ? "s" : ""}
+				</div>
+			)}
 		</div>
 	);
 }
