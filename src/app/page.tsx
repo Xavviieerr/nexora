@@ -27,7 +27,7 @@ export default function Page() {
 				<div>
 					<h2>Query Builder</h2>
 
-					<NodeRenderer node={tree} isRoot={true} />
+					<NodeRenderer node={tree} />
 					<ExecutionPanel />
 				</div>
 
