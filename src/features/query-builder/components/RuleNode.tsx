@@ -1,45 +1,38 @@
+import { memo } from "react";
 import { RuleNode as RuleType } from "@/core/query/types";
 import { useQueryStore } from "@/state/queryStore";
 import { operatorMatrix } from "@/core/schema/operatorMatrix";
 import { inferInputType } from "@/core/schema/inferInputType";
-import { ValidationError } from "@/core/validator/types";
 
 type Props = {
 	node: RuleType;
-	errors?: ValidationError[];
 };
 
-export default function RuleNode({ node, errors = [] }: Props) {
+function RuleNodeBase({ node }: Props) {
 	const updateNode = useQueryStore((s) => s.updateNode);
 	const deleteNode = useQueryStore((s) => s.deleteNode);
 	const schema = useQueryStore((s) => s.schema);
 
 	const fieldDef = schema.fields.find((f) => f.name === node.field);
-
 	const availableOperators = fieldDef ? operatorMatrix[fieldDef.type] : [];
-
-	const hasErrors = errors.length > 0;
 
 	return (
 		<div
-			id={`node-${node.id}`}
 			style={{
-				border: hasErrors ? "2px solid red" : "1px solid gray",
-				background: hasErrors ? "rgba(255,0,0,0.05)" : "transparent",
+				border: "1px solid gray",
 				margin: 5,
 				padding: 10,
 				display: "flex",
 				gap: 10,
 				alignItems: "center",
 				flexWrap: "wrap",
-				borderRadius: 6,
+				willChange: "transform",
 			}}
 		>
 			<select
 				value={node.field}
 				onChange={(e) => {
 					const newField = e.target.value;
-
 					const newFieldDef = schema.fields.find((f) => f.name === newField);
 
 					const newOperators = newFieldDef
@@ -61,7 +54,6 @@ export default function RuleNode({ node, errors = [] }: Props) {
 				}}
 			>
 				<option value="">Select field</option>
-
 				{schema.fields.map((f) => (
 					<option key={f.name} value={f.name}>
 						{f.name}
@@ -100,7 +92,6 @@ export default function RuleNode({ node, errors = [] }: Props) {
 					}
 				>
 					<option value="">Select value</option>
-
 					{fieldDef.options?.map((opt) => (
 						<option key={opt} value={opt}>
 							{opt}
@@ -110,7 +101,6 @@ export default function RuleNode({ node, errors = [] }: Props) {
 			) : (
 				<input
 					type={fieldDef ? inferInputType(fieldDef.type) : "text"}
-					placeholder="value"
 					value={node.value}
 					onChange={(e) =>
 						updateNode(node.id, (current) => ({
@@ -122,19 +112,10 @@ export default function RuleNode({ node, errors = [] }: Props) {
 			)}
 
 			<button onClick={() => deleteNode(node.id)}>Delete</button>
-
-			{hasErrors && (
-				<div
-					style={{
-						color: "red",
-						fontSize: 12,
-						fontWeight: 600,
-					}}
-				>
-					{errors.length} error
-					{errors.length > 1 ? "s" : ""}
-				</div>
-			)}
 		</div>
 	);
 }
+
+const RuleNode = memo(RuleNodeBase);
+
+export default RuleNode;
