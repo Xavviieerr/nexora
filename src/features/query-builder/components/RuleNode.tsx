@@ -22,6 +22,7 @@ export default function RuleNode({ node, errors = [] }: Props) {
 
 	return (
 		<div
+			id={`node-${node.id}`}
 			style={{
 				border: hasErrors ? "2px solid red" : "1px solid gray",
 				background: hasErrors ? "rgba(255,0,0,0.05)" : "transparent",

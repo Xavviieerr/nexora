@@ -68,7 +68,21 @@ export default function Page() {
 					<div style={{ color: "green" }}>All queries valid</div>
 				) : (
 					errors.map((err, i) => (
-						<div key={i}>
+						<div
+							key={i}
+							onClick={() => {
+								const el = document.getElementById(`node-${err.nodeId}`);
+
+								el?.scrollIntoView({
+									behavior: "smooth",
+									block: "center",
+								});
+							}}
+							style={{
+								cursor: "pointer",
+								textDecoration: "underline",
+							}}
+						>
 							[{err.nodeId}] {err.message}
 						</div>
 					))

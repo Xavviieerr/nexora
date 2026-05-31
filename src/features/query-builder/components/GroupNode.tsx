@@ -21,6 +21,7 @@ export default function GroupNode({ node, children, errors = [] }: Props) {
 
 	return (
 		<div
+			id={`node-${node.id}`}
 			style={{
 				border: hasErrors ? "2px solid orange" : "1px solid transparent",
 				borderRadius: 8,
