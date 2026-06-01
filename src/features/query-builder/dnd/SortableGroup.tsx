@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import {
 	SortableContext,
 	verticalListSortingStrategy,
@@ -7,7 +8,7 @@ import {
 
 type Props = {
 	items: string[];
-	children: React.ReactNode;
+	children: ReactNode;
 };
 
 export default function SortableGroup({ items, children }: Props) {

@@ -14,6 +14,8 @@ describe("updateNode", () => {
 			return { ...node, value: 100 };
 		});
 
+		if (updated.type !== "group") throw new Error("Expected a group node");
+
 		const updatedRule = updated.children[0];
 
 		expect(updatedRule.type).toBe("rule");

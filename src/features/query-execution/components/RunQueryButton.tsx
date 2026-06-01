@@ -15,7 +15,8 @@ export default function RunQueryButton() {
 	const runQuery = () => {
 		setRunning(true);
 
-		const results = executeQuery(tree, mockDataset);
+		const schemaId = useQueryStore.getState().schema.id;
+		const results = executeQuery(tree, mockDataset[schemaId] ?? []);
 
 		setResults(results);
 

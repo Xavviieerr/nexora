@@ -18,3 +18,13 @@ export function createGroupNode(id?: string): GroupNode {
 		children: [],
 	};
 }
+
+/** Stable root node — same ID on server and client to avoid hydration mismatch. */
+export function createRootGroupNode(): GroupNode {
+	return {
+		id: "root",
+		type: "group",
+		logic: "AND",
+		children: [],
+	};
+}
