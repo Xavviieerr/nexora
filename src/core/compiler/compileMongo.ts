@@ -14,6 +14,13 @@ function compileRule(node: RuleNode): MongoQuery {
 				[node.field]: node.value,
 			};
 
+		case "neq":
+			return {
+				[node.field]: {
+					$ne: node.value,
+				},
+			};
+
 		case "gt":
 			return {
 				[node.field]: {
@@ -43,6 +50,32 @@ function compileRule(node: RuleNode): MongoQuery {
 					$options: "i",
 				},
 			};
+
+		case "in":
+			return {
+				[node.field]: {
+					$in: Array.isArray(node.value)
+						? node.value
+						: String(node.value)
+								.split(",")
+								.map((v) => v.trim()),
+				},
+			};
+
+		case "between": {
+			const [min, max] = Array.isArray(node.value)
+				? node.value
+				: String(node.value)
+						.split(",")
+						.map((v) => Number(v.trim()));
+
+			return {
+				[node.field]: {
+					$gte: min,
+					$lte: max,
+				},
+			};
+		}
 
 		default:
 			return {};
