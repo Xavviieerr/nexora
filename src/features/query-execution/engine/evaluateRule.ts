@@ -39,6 +39,21 @@ export function evaluateRule(rule: RuleNode, record: QueryRecord): boolean {
 				.toLowerCase()
 				.startsWith(String(rule.value).toLowerCase());
 
+		case "regex": {
+			if (value === null || value === undefined) return false;
+			try {
+				return new RegExp(String(rule.value), "i").test(String(value));
+			} catch {
+				return false;
+			}
+		}
+
+		case "isNull":
+			return value === null || value === undefined;
+
+		case "isNotNull":
+			return value !== null && value !== undefined;
+
 		case "in": {
 			const list = toList(rule.value);
 			return list.includes(String(value));

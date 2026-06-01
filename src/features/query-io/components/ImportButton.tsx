@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useQueryStore } from "@/state/queryStore";
+import { toast } from "react-toastify";
 
 export default function ImportButton() {
 	const importQuery = useQueryStore((s) => s.importQuery);
@@ -13,8 +14,9 @@ export default function ImportButton() {
 			importQuery(value);
 			setOpen(false);
 			setValue("");
-		} catch {
-			alert("Invalid query JSON");
+			toast.success("Query imported successfully", { autoClose: 2000 });
+		} catch (error) {
+			toast.error("Invalid query JSON", { autoClose: 2000 });
 		}
 	};
 
@@ -29,7 +31,11 @@ export default function ImportButton() {
 	return (
 		<div
 			className="panel"
-			style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}
+			style={{
+				display: "flex",
+				flexDirection: "column",
+				gap: "var(--space-3)",
+			}}
 		>
 			<div className="panel-body">
 				<textarea

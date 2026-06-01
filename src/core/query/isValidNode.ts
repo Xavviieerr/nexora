@@ -5,10 +5,13 @@ const operators: Operator[] = [
 	"neq",
 	"contains",
 	"startsWith",
+	"regex",
 	"gt",
 	"lt",
 	"in",
 	"between",
+	"isNull",
+	"isNotNull",
 ];
 
 const logicValues: Logic[] = ["AND", "OR"];

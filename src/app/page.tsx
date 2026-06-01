@@ -17,41 +17,46 @@ import SchemaSelector from "@/features/query-schema/components/SchemaSleector";
 type SidebarTab = "preview" | "history" | "presets";
 type Theme = "light" | "dark";
 
-function getInitialTheme(): Theme {
-	if (typeof window === "undefined") {
-		return "light";
-	}
-
-	const stored = localStorage.getItem("nexora-theme");
-	if (stored === "light" || stored === "dark") {
-		return stored;
-	}
-
-	return window.matchMedia("(prefers-color-scheme: dark)").matches
-		? "dark"
-		: "light";
-}
-
 export default function Page() {
 	const tree = useQueryStore((s) => s.tree);
 	const schema = useQueryStore((s) => s.schema);
 	const errors = validateTree(tree, schema);
 
 	const [sidebarTab, setSidebarTab] = useState<SidebarTab>("preview");
-	const [theme, setTheme] = useState<Theme>(getInitialTheme);
+	const [theme, setTheme] = useState<Theme>("light");
+	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
-		document.documentElement.setAttribute("data-theme", theme);
-		localStorage.setItem("nexora-theme", theme);
-	}, [theme]);
+		setMounted(true);
+		const stored = localStorage.getItem("nexora-theme");
+		if (stored === "light" || stored === "dark") {
+			setTheme(stored);
+		} else {
+			const prefersLight = window.matchMedia(
+				"(prefers-color-scheme: light)",
+			).matches;
+			setTheme(prefersLight ? "light" : "dark");
+		}
+	}, []);
+
+	useEffect(() => {
+		if (mounted) {
+			document.documentElement.setAttribute("data-theme", theme);
+			localStorage.setItem("nexora-theme", theme);
+		}
+	}, [theme, mounted]);
 
 	const toggleTheme = () => {
 		const next = theme === "light" ? "dark" : "light";
 		setTheme(next);
 	};
 
+	if (!mounted) {
+		return <div style={{ minHeight: "100vh" }} />;
+	}
+
 	return (
-		<div className="nexora-app">
+		<div className="nexora-app" suppressHydrationWarning>
 			{/* ── Header ─────────────────────────────────────────── */}
 			<header className="nexora-header">
 				<div className="nexora-header-left">

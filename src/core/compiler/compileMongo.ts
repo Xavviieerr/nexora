@@ -52,6 +52,26 @@ function compileRule(node: RuleNode): MongoQuery {
 				},
 			};
 
+		case "regex":
+			return {
+				[node.field]: {
+					$regex: node.value,
+					$options: "i",
+				},
+			};
+
+		case "isNull":
+			return {
+				[node.field]: null,
+			};
+
+		case "isNotNull":
+			return {
+				[node.field]: {
+					$ne: null,
+				},
+			};
+
 		case "in":
 			return {
 				[node.field]: {
