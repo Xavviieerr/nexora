@@ -10,9 +10,12 @@ describe("reorderNode", () => {
 		const group = createGroupNode();
 		group.children = [ruleA, ruleB, ruleC];
 
-		const result = reorderNode(group, group.id, 0, 2) as any;
+		const result = reorderNode(group, group.id, 0, 2);
 
-		expect(result.children.map((c: any) => c.id)).toEqual([
+		expect(result.type).toBe("group");
+		if (result.type !== "group") return;
+
+		expect(result.children.map((child) => child.id)).toEqual([
 			ruleB.id,
 			ruleC.id,
 			ruleA.id,
@@ -25,8 +28,10 @@ describe("reorderNode", () => {
 		const group = createGroupNode();
 		group.children = [ruleA];
 
-		const result = reorderNode(group, group.id, 0, 5) as any;
+		const result = reorderNode(group, group.id, 0, 5);
 
+		expect(result.type).toBe("group");
+		if (result.type !== "group") return;
 		expect(result.children.length).toBe(1);
 	});
 
@@ -40,11 +45,15 @@ describe("reorderNode", () => {
 		const root = createGroupNode();
 		root.children = [nestedGroup];
 
-		const result = reorderNode(root, nestedGroup.id, 0, 1) as any;
+		const result = reorderNode(root, nestedGroup.id, 0, 1);
 
+		expect(result.type).toBe("group");
+		if (result.type !== "group") return;
 		expect(result.children[0].type).toBe("group");
-		
-		const updatedNestedGroup = result.children[0] as any;
+
+		const updatedNestedGroup = result.children[0];
+		expect(updatedNestedGroup.type).toBe("group");
+		if (updatedNestedGroup.type !== "group") return;
 		expect(updatedNestedGroup.children[0].id).toBe(ruleB.id);
 		expect(updatedNestedGroup.children[1].id).toBe(ruleA.id);
 	});

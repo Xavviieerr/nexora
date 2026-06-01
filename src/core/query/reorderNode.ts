@@ -13,8 +13,16 @@ export function reorderNode(
 	if (tree.id === parentId) {
 		const children = [...tree.children];
 
-		const [moved] = children.splice(fromIndex, 1);
+		if (
+			fromIndex < 0 ||
+			toIndex < 0 ||
+			fromIndex >= children.length ||
+			toIndex >= children.length
+		) {
+			return tree;
+		}
 
+		const [moved] = children.splice(fromIndex, 1);
 		if (!moved) {
 			return tree;
 		}

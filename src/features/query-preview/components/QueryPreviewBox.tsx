@@ -1,5 +1,5 @@
 type Props = {
-	query: any;
+	query: unknown;
 };
 
 export default function QueryPreviewBox({ query }: Props) {

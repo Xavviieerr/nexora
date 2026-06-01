@@ -13,7 +13,7 @@ export default function ImportButton() {
 			importQuery(value);
 			setOpen(false);
 			setValue("");
-		} catch (e) {
+		} catch {
 			alert("Invalid query JSON");
 		}
 	};

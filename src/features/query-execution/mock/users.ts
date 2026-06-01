@@ -1,4 +1,6 @@
-export const users = [
+import { QueryRecord } from "../types";
+
+export const users: QueryRecord[] = [
 	{
 		id: 1,
 		name: "Ada",

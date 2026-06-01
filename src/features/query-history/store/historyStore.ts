@@ -14,7 +14,6 @@ type HistoryStore = {
 	addToHistory: (tree: Node) => void;
 	removeFromHistory: (id: string) => void;
 	clearHistory: () => void;
-	restoreFromHistory: (item: HistoryItem) => void;
 };
 
 export const useHistoryStore = create<HistoryStore>((set) => ({
@@ -40,11 +39,4 @@ export const useHistoryStore = create<HistoryStore>((set) => ({
 	},
 
 	clearHistory: () => set({ items: [] }),
-
-	restoreFromHistory: (item) => {
-		// NOTE: UI wiring happens in next commits
-		set(() => ({
-			items: useHistoryStore.getState().items,
-		}));
-	},
 }));

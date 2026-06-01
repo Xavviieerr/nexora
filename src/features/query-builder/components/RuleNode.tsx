@@ -1,11 +1,27 @@
 import { memo } from "react";
-import { RuleNode as RuleType } from "@/core/query/types";
+import { Operator, QueryValue, RuleNode as RuleType } from "@/core/query/types";
 import { useQueryStore } from "@/state/queryStore";
 import { operatorMatrix } from "@/core/schema/operatorMatrix";
 import { inferInputType } from "@/core/schema/inferInputType";
 
 type Props = {
 	node: RuleType;
+};
+
+const OPERATOR_LABELS: Record<string, string> = {
+	eq: "=",
+	neq: "≠",
+	gt: ">",
+	gte: "≥",
+	lt: "<",
+	lte: "≤",
+	contains: "contains",
+	startsWith: "starts with",
+	endsWith: "ends with",
+	in: "in",
+	notIn: "not in",
+	isNull: "is null",
+	isNotNull: "is not null",
 };
 
 function RuleNodeBase({ node }: Props) {
@@ -15,46 +31,63 @@ function RuleNodeBase({ node }: Props) {
 
 	const fieldDef = schema.fields.find((f) => f.name === node.field);
 	const availableOperators = fieldDef ? operatorMatrix[fieldDef.type] : [];
+	const inputValue =
+		typeof node.value === "string" || typeof node.value === "number"
+			? node.value
+			: "";
+
+	const getInputValue = (rawValue: string): QueryValue => {
+		if (fieldDef?.type === "number") {
+			return rawValue === "" ? "" : Number(rawValue);
+		}
+		return rawValue;
+	};
 
 	return (
-		<div
-			style={{
-				border: "1px solid gray",
-				margin: 5,
-				padding: 10,
-				display: "flex",
-				gap: 10,
-				alignItems: "center",
-				flexWrap: "wrap",
-				borderRadius: 6,
-				transition: "background 120ms ease, border 120ms ease",
-			}}
-		>
+		<div id={`node-${node.id}`} className="query-rule">
+			{/* Drag handle */}
+			<div
+				className="query-rule-drag-handle"
+				aria-hidden="true"
+				title="Drag to reorder"
+			>
+				<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+					<circle cx="5.5" cy="4" r="1.2" />
+					<circle cx="10.5" cy="4" r="1.2" />
+					<circle cx="5.5" cy="8" r="1.2" />
+					<circle cx="10.5" cy="8" r="1.2" />
+					<circle cx="5.5" cy="12" r="1.2" />
+					<circle cx="10.5" cy="12" r="1.2" />
+				</svg>
+			</div>
+
+			{/* Field selector */}
 			<select
+				className="nx-select"
 				value={node.field}
+				style={{ minWidth: 120 }}
 				onChange={(e) => {
 					const newField = e.target.value;
 					const newFieldDef = schema.fields.find((f) => f.name === newField);
-
 					const newOperators = newFieldDef
 						? operatorMatrix[newFieldDef.type]
 						: [];
-
-					const newOperator = newOperators.length > 0 ? newOperators[0] : "eq";
+					const newOperator: Operator =
+						newOperators.length > 0 ? newOperators[0] : "eq";
 
 					updateNode(node.id, (current) =>
 						current.type === "rule"
 							? {
 									...current,
 									field: newField,
-									operator: newOperator as any,
+									operator: newOperator,
 									value: "",
 								}
 							: current,
 					);
 				}}
 			>
-				<option value="">Select field</option>
+				<option value="">field…</option>
 				{schema.fields.map((f) => (
 					<option key={f.name} value={f.name}>
 						{f.name}
@@ -62,37 +95,41 @@ function RuleNodeBase({ node }: Props) {
 				))}
 			</select>
 
+			{/* Operator selector */}
 			<select
+				className="nx-select"
 				value={node.operator}
+				style={{ minWidth: 90 }}
 				onChange={(e) =>
 					updateNode(node.id, (current) =>
 						current.type === "rule"
-							? {
-									...current,
-									operator: e.target.value as any,
-								}
+							? { ...current, operator: e.target.value as Operator }
 							: current,
 					)
 				}
 			>
 				{availableOperators.map((op) => (
 					<option key={op} value={op}>
-						{op}
+						{OPERATOR_LABELS[op] ?? op}
 					</option>
 				))}
 			</select>
 
+			{/* Value input */}
 			{fieldDef?.type === "enum" ? (
 				<select
-					value={node.value}
+					className="nx-select"
+					value={typeof node.value === "string" ? node.value : ""}
+					style={{ minWidth: 120, flex: 1 }}
 					onChange={(e) =>
-						updateNode(node.id, (current) => ({
-							...current,
-							value: e.target.value,
-						}))
+						updateNode(node.id, (current) =>
+							current.type === "rule"
+								? { ...current, value: e.target.value }
+								: current,
+						)
 					}
 				>
-					<option value="">Select value</option>
+					<option value="">value…</option>
 					{fieldDef.options?.map((opt) => (
 						<option key={opt} value={opt}>
 							{opt}
@@ -101,22 +138,44 @@ function RuleNodeBase({ node }: Props) {
 				</select>
 			) : (
 				<input
+					className="nx-input"
 					type={fieldDef ? inferInputType(fieldDef.type) : "text"}
-					value={node.value}
+					value={inputValue}
+					placeholder="value…"
+					style={{ minWidth: 100, flex: 1 }}
 					onChange={(e) =>
-						updateNode(node.id, (current) => ({
-							...current,
-							value: e.target.value,
-						}))
+						updateNode(node.id, (current) =>
+							current.type === "rule"
+								? { ...current, value: getInputValue(e.target.value) }
+								: current,
+						)
 					}
 				/>
 			)}
 
-			<button onClick={() => deleteNode(node.id)}>Delete</button>
+			{/* Delete — revealed on hover via CSS */}
+			<button
+				className="btn btn-danger btn-sm btn-icon query-rule-delete"
+				onClick={() => deleteNode(node.id)}
+				title="Delete rule"
+				aria-label="Delete rule"
+			>
+				<svg
+					width="12"
+					height="12"
+					viewBox="0 0 16 16"
+					fill="none"
+					stroke="currentColor"
+					strokeWidth="1.8"
+					strokeLinecap="round"
+					strokeLinejoin="round"
+				>
+					<path d="M4 4l8 8M12 4l-8 8" />
+				</svg>
+			</button>
 		</div>
 	);
 }
 
 const RuleNode = memo(RuleNodeBase);
-
 export default RuleNode;

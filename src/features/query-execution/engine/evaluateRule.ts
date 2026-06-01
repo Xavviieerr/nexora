@@ -1,9 +1,7 @@
 import { RuleNode } from "@/core/query/types";
+import { QueryRecord } from "../types";
 
-export function evaluateRule(
-	rule: RuleNode,
-	record: Record<string, any>,
-): boolean {
+export function evaluateRule(rule: RuleNode, record: QueryRecord): boolean {
 	const value = record[rule.field];
 
 	switch (rule.operator) {
@@ -11,10 +9,12 @@ export function evaluateRule(
 			return value === rule.value;
 
 		case "gt":
-			return value > Number(rule.value);
+			if (value === null) return false;
+			return Number(value) > Number(rule.value);
 
 		case "lt":
-			return value < Number(rule.value);
+			if (value === null) return false;
+			return Number(value) < Number(rule.value);
 
 		case "contains":
 			return String(value)
@@ -25,6 +25,9 @@ export function evaluateRule(
 			return String(value)
 				.toLowerCase()
 				.startsWith(String(rule.value).toLowerCase());
+
+		case "neq":
+			return value !== rule.value;
 
 		default:
 			return false;
