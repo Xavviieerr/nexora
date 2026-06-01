@@ -9,7 +9,7 @@ export default function ExecuteButton({ onRun, loading }: Props) {
 			className="btn btn-run"
 			onClick={onRun}
 			disabled={loading}
-			title="Run query (⌘↵)"
+			title="Run query"
 		>
 			{loading ? (
 				<>

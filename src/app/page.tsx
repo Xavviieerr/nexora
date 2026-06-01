@@ -6,6 +6,7 @@ import { useQueryStore } from "@/state/queryStore";
 import { validateTree } from "@/core/validator/validateTree";
 
 import ExecutionPanel from "@/features/query-execution/components/ExecutionPanel";
+import ResultsTable from "@/features/query-execution/components/ResultsTable";
 import QueryPreviewPanel from "@/features/query-preview/components/QueryPreviewPanel";
 import HistoryPanel from "@/features/query-history/components/HistoryPanel";
 import SaveQueryButton from "@/features/query-history/components/SaveQueryButton";
@@ -13,6 +14,22 @@ import ImportExportPanel from "@/features/query-import-export/components/ImportE
 import PresetPanel from "@/features/query-history/components/PresetPanel";
 
 type SidebarTab = "preview" | "history" | "presets";
+type Theme = "light" | "dark";
+
+function getInitialTheme(): Theme {
+	if (typeof window === "undefined") {
+		return "light";
+	}
+
+	const stored = localStorage.getItem("nexora-theme");
+	if (stored === "light" || stored === "dark") {
+		return stored;
+	}
+
+	return window.matchMedia("(prefers-color-scheme: dark)").matches
+		? "dark"
+		: "light";
+}
 
 export default function Page() {
 	const tree = useQueryStore((s) => s.tree);
@@ -20,26 +37,16 @@ export default function Page() {
 	const errors = validateTree(tree, schema);
 
 	const [sidebarTab, setSidebarTab] = useState<SidebarTab>("preview");
-	const [theme, setTheme] = useState<"light" | "dark">("light");
+	const [theme, setTheme] = useState<Theme>(getInitialTheme);
 
 	useEffect(() => {
-		const stored = localStorage.getItem("nexora-theme") as
-			| "light"
-			| "dark"
-			| null;
-		const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches
-			? "dark"
-			: "light";
-		const initial = stored ?? preferred;
-		setTheme(initial);
-		document.documentElement.setAttribute("data-theme", initial);
-	}, []);
+		document.documentElement.setAttribute("data-theme", theme);
+		localStorage.setItem("nexora-theme", theme);
+	}, [theme]);
 
 	const toggleTheme = () => {
 		const next = theme === "light" ? "dark" : "light";
 		setTheme(next);
-		document.documentElement.setAttribute("data-theme", next);
-		localStorage.setItem("nexora-theme", next);
 	};
 
 	return (
@@ -213,6 +220,8 @@ export default function Page() {
 					<div className="nexora-builder-scroll">
 						<NodeRenderer node={tree} />
 					</div>
+
+					<ResultsTable />
 				</div>
 
 				{/* ── Sidebar ──────────────────────────────────────── */}

@@ -19,22 +19,41 @@ export default function ImportButton() {
 	};
 
 	if (!open) {
-		return <button onClick={() => setOpen(true)}>Import Query</button>;
+		return (
+			<button className="btn" onClick={() => setOpen(true)}>
+				Import Query
+			</button>
+		);
 	}
 
 	return (
-		<div style={{ marginTop: 10 }}>
-			<textarea
-				value={value}
-				onChange={(e) => setValue(e.target.value)}
-				placeholder="Paste query JSON"
-				rows={6}
-				style={{ width: "100%" }}
-			/>
+		<div
+			className="panel"
+			style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}
+		>
+			<div className="panel-body">
+				<textarea
+					className="nx-textarea"
+					value={value}
+					onChange={(e) => setValue(e.target.value)}
+					placeholder="Paste query JSON"
+					rows={6}
+				/>
 
-			<div style={{ display: "flex", gap: 8 }}>
-				<button onClick={handleImport}>Load</button>
-				<button onClick={() => setOpen(false)}>Cancel</button>
+				<div
+					style={{
+						display: "flex",
+						gap: "var(--space-2)",
+						marginTop: "var(--space-3)",
+					}}
+				>
+					<button className="btn btn-primary" onClick={handleImport}>
+						Load
+					</button>
+					<button className="btn btn-ghost" onClick={() => setOpen(false)}>
+						Cancel
+					</button>
+				</div>
 			</div>
 		</div>
 	);

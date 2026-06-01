@@ -10,7 +10,7 @@ export default function QueryPreviewPanel() {
 
 	const handleCopy = async () => {
 		try {
-			await navigator.clipboard.writeText(preview);
+			await navigator.clipboard.writeText(JSON.stringify(preview, null, 2));
 			setCopied(true);
 			setTimeout(() => setCopied(false), 1800);
 		} catch {

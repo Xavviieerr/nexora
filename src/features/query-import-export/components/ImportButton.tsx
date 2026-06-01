@@ -1,11 +1,10 @@
 "use client";
 
 import { ChangeEvent } from "react";
-import { isValidNode } from "@/core/query/isValidNode";
 import { useQueryStore } from "@/state/queryStore";
 
 export default function ImportButton() {
-	const setTree = useQueryStore((s) => s.setTree);
+	const importQuery = useQueryStore((s) => s.importQuery);
 
 	const handleImport = async (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
@@ -13,14 +12,8 @@ export default function ImportButton() {
 
 		try {
 			const text = await file.text();
-			const parsed = JSON.parse(text);
-
-			if (!isValidNode(parsed)) {
-				alert("Invalid query structure");
-				return;
-			}
-
-			setTree(parsed);
+			importQuery(text);
+			event.target.value = "";
 		} catch {
 			alert("Unable to import file");
 		}

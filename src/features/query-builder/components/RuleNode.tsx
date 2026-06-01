@@ -10,18 +10,13 @@ type Props = {
 
 const OPERATOR_LABELS: Record<string, string> = {
 	eq: "=",
-	neq: "≠",
+	neq: "!=",
 	gt: ">",
-	gte: "≥",
 	lt: "<",
-	lte: "≤",
 	contains: "contains",
 	startsWith: "starts with",
-	endsWith: "ends with",
 	in: "in",
-	notIn: "not in",
-	isNull: "is null",
-	isNotNull: "is not null",
+	between: "between",
 };
 
 function RuleNodeBase({ node }: Props) {
@@ -40,28 +35,12 @@ function RuleNodeBase({ node }: Props) {
 		if (fieldDef?.type === "number") {
 			return rawValue === "" ? "" : Number(rawValue);
 		}
+
 		return rawValue;
 	};
 
 	return (
 		<div id={`node-${node.id}`} className="query-rule">
-			{/* Drag handle */}
-			<div
-				className="query-rule-drag-handle"
-				aria-hidden="true"
-				title="Drag to reorder"
-			>
-				<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-					<circle cx="5.5" cy="4" r="1.2" />
-					<circle cx="10.5" cy="4" r="1.2" />
-					<circle cx="5.5" cy="8" r="1.2" />
-					<circle cx="10.5" cy="8" r="1.2" />
-					<circle cx="5.5" cy="12" r="1.2" />
-					<circle cx="10.5" cy="12" r="1.2" />
-				</svg>
-			</div>
-
-			{/* Field selector */}
 			<select
 				className="nx-select"
 				value={node.field}
@@ -87,7 +66,7 @@ function RuleNodeBase({ node }: Props) {
 					);
 				}}
 			>
-				<option value="">field…</option>
+				<option value="">field...</option>
 				{schema.fields.map((f) => (
 					<option key={f.name} value={f.name}>
 						{f.name}
@@ -95,7 +74,6 @@ function RuleNodeBase({ node }: Props) {
 				))}
 			</select>
 
-			{/* Operator selector */}
 			<select
 				className="nx-select"
 				value={node.operator}
@@ -115,7 +93,6 @@ function RuleNodeBase({ node }: Props) {
 				))}
 			</select>
 
-			{/* Value input */}
 			{fieldDef?.type === "enum" ? (
 				<select
 					className="nx-select"
@@ -129,7 +106,7 @@ function RuleNodeBase({ node }: Props) {
 						)
 					}
 				>
-					<option value="">value…</option>
+					<option value="">value...</option>
 					{fieldDef.options?.map((opt) => (
 						<option key={opt} value={opt}>
 							{opt}
@@ -141,7 +118,7 @@ function RuleNodeBase({ node }: Props) {
 					className="nx-input"
 					type={fieldDef ? inferInputType(fieldDef.type) : "text"}
 					value={inputValue}
-					placeholder="value…"
+					placeholder="value..."
 					style={{ minWidth: 100, flex: 1 }}
 					onChange={(e) =>
 						updateNode(node.id, (current) =>
@@ -153,7 +130,6 @@ function RuleNodeBase({ node }: Props) {
 				/>
 			)}
 
-			{/* Delete — revealed on hover via CSS */}
 			<button
 				className="btn btn-danger btn-sm btn-icon query-rule-delete"
 				onClick={() => deleteNode(node.id)}

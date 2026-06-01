@@ -3,8 +3,6 @@
    Brand: #19231A / #33673B / #9A6D38 / #CC3F0C / #D8CBC7
    ───────────────────────────────────────────────────────────── */
 
-@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap");
-
 /* ── Tokens ─────────────────────────────────────────────────── */
 :root {
 	/* Brand */
@@ -108,7 +106,6 @@
 	--border-accent: rgba(154, 109, 56, 0.35);
 
 	--text-primary: #e8e2dc;
-	--text-secondary: #9ea E9F;
 	--text-secondary: #9fae9f;
 	--text-tertiary: #6b7a6c;
 	--text-disabled: #3e4e3f;
@@ -456,10 +453,10 @@ pre,
 
 /* ── Form Controls ──────────────────────────────────────────── */
 .nx-select,
-.nx-input {
+.nx-input,
+.nx-textarea {
 	display: inline-flex;
 	align-items: center;
-	height: 28px;
 	padding: 0 var(--space-2);
 	font-family: var(--font-sans);
 	font-size: 12px;
@@ -476,6 +473,21 @@ pre,
 	width: auto;
 }
 
+.nx-select,
+.nx-input {
+	height: 28px;
+}
+
+.nx-textarea {
+	display: block;
+	width: 100%;
+	min-height: 120px;
+	padding: var(--space-2);
+	line-height: 1.5;
+	resize: vertical;
+	font-family: var(--font-mono);
+}
+
 .nx-select {
 	padding-right: var(--space-5);
 	appearance: none;
@@ -486,13 +498,15 @@ pre,
 }
 
 .nx-select:hover,
-.nx-input:hover {
+.nx-input:hover,
+.nx-textarea:hover {
 	border-color: var(--border-strong);
 	background: var(--surface-raised);
 }
 
 .nx-select:focus,
-.nx-input:focus {
+.nx-input:focus,
+.nx-textarea:focus {
 	border-color: var(--accent);
 	box-shadow: 0 0 0 3px var(--accent-muted);
 	background: var(--surface-raised);

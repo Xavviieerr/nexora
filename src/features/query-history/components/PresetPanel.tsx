@@ -9,19 +9,36 @@ export default function PresetPanel() {
 	return (
 		<div
 			style={{
-				marginTop: 20,
-				padding: 12,
-				borderTop: "1px solid #222",
+				display: "flex",
+				flexDirection: "column",
+				gap: "var(--space-3)",
 			}}
 		>
-			<h3>Presets</h3>
-			<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+			<span
+				className="section-label"
+				style={{ marginBottom: 0, borderBottom: "none", paddingBottom: 0 }}
+			>
+				Presets
+			</span>
+
+			<div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
 				{defaultPresets.map((preset) => (
 					<button
 						key={preset.name}
+						className="btn"
 						onClick={() => setTree(structuredClone(preset.tree))}
+						style={{
+							justifyContent: "space-between",
+							height: "auto",
+							minHeight: 34,
+							padding: "var(--space-2) var(--space-3)",
+						}}
 					>
-						{preset.name}
+						<span>{preset.name}</span>
+						<span className="tag tag-neutral">
+							{preset.tree.children.length} rule
+							{preset.tree.children.length !== 1 ? "s" : ""}
+						</span>
 					</button>
 				))}
 			</div>

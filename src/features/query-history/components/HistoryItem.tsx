@@ -12,35 +12,33 @@ export default function HistoryItem({ item }: Props) {
 	const setTree = useQueryStore((s) => s.setTree);
 	const removeFromHistory = useHistoryStore((s) => s.removeFromHistory);
 
-	const handleRestore = () => {
-		setTree(item.tree);
-	};
-
 	return (
-		<div
-			style={{
-				border: "1px solid #333",
-				padding: 8,
-				marginBottom: 8,
-				borderRadius: 6,
-			}}
-		>
-			<div style={{ fontSize: 12 }}>{item.label}</div>
-
-			<div style={{ fontSize: 10, opacity: 0.7 }}>
+		<div className="history-item">
+			<div className="history-item-label">{item.label}</div>
+			<div className="history-item-meta">
 				{new Date(item.timestamp).toLocaleString()}
 			</div>
 
 			<div
 				style={{
 					display: "flex",
-					gap: 6,
-					marginTop: 6,
+					gap: "var(--space-2)",
+					marginTop: "var(--space-2)",
 				}}
 			>
-				<button onClick={handleRestore}>Restore</button>
+				<button
+					className="btn btn-primary btn-sm"
+					onClick={() => setTree(structuredClone(item.tree))}
+				>
+					Restore
+				</button>
 
-				<button onClick={() => removeFromHistory(item.id)}>Delete</button>
+				<button
+					className="btn btn-danger btn-sm"
+					onClick={() => removeFromHistory(item.id)}
+				>
+					Delete
+				</button>
 			</div>
 		</div>
 	);

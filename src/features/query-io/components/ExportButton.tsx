@@ -11,5 +11,9 @@ export default function ExportButton() {
 		alert("Query copied to clipboard");
 	};
 
-	return <button onClick={handleExport}>Export Query</button>;
+	return (
+		<button className="btn" onClick={handleExport}>
+			Export Query
+		</button>
+	);
 }

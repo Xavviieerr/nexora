@@ -67,7 +67,7 @@ export default function ResultsTable() {
 								</td>
 								{columns.map((col) => (
 									<td key={col}>
-										{String((row as Record<string, unknown>)[col] ?? "—")}
+										{String((row as Record<string, unknown>)[col] ?? "-")}
 									</td>
 								))}
 							</tr>
