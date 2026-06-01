@@ -3,7 +3,7 @@ import { Node } from "@/core/query/types";
 import { createGroupNode, createRuleNode } from "@/core/query/createNode";
 import { updateNode as updateTree } from "@/core/query/updateNode";
 import { deleteNode as deleteTree } from "@/core/query/deleteNode";
-import { defaultSchema, Schema } from "@/core/schema/schema";
+import { schemas, defaultSchema, Schema } from "@/core/schema/schema";
 import { reorderNode } from "@/core/query/reorderNode";
 import { isValidNode } from "@/core/query/isValidNode";
 
@@ -11,6 +11,8 @@ type QueryStore = {
 	tree: Node;
 	schema: Schema;
 
+	schemaId: string;
+	setSchema: (id: string) => void;
 	// history core
 	past: Node[];
 	future: Node[];
@@ -48,6 +50,7 @@ function pushHistory(state: QueryStore, newTree: Node): QueryStore {
 export const useQueryStore = create<QueryStore>((set, get) => ({
 	tree: createGroupNode(),
 	schema: defaultSchema,
+	schemaId: defaultSchema.id,
 
 	past: [],
 	future: [],
@@ -131,7 +134,19 @@ export const useQueryStore = create<QueryStore>((set, get) => ({
 			future: [state.tree, ...state.future],
 		});
 	},
+	setSchema: (id: string) => {
+		const nextSchema = schemas.find((s) => s.id === id);
+		if (!nextSchema) return;
 
+		set((state) => ({
+			...state,
+			schemaId: id,
+			schema: nextSchema,
+			tree: createGroupNode(), // reset query on schema switch
+			past: [],
+			future: [],
+		}));
+	},
 	redo: () => {
 		const state = get();
 		if (state.future.length === 0) return;
