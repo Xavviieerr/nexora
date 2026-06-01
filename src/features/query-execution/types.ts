@@ -1,1 +1,1 @@
-export type QueryRecord = Record<string, string | number | boolean | null>;
+export type QueryRecord = Record<string, unknown>;

@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useRef } from "react";
+import type { ReactNode } from "react";
 
 type Props = {
-	title: React.ReactNode;
-	children: React.ReactNode;
+	title: ReactNode;
+	children: ReactNode;
 	defaultOpen?: boolean;
 	depth?: number;
 };

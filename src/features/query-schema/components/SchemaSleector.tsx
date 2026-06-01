@@ -8,21 +8,33 @@ export default function SchemaSelector() {
 	const setSchema = useQueryStore((s) => s.setSchema);
 
 	return (
-		<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-			<span style={{ fontSize: 12, opacity: 0.7 }}>Schema:</span>
+		<div
+			style={{ display: "flex", alignItems: "center", gap: "var(--space-2)" }}
+		>
+			<span
+				style={{
+					fontSize: 11,
+					color: "var(--text-tertiary)",
+					fontWeight: 500,
+				}}
+			>
+				Schema
+			</span>
 
 			<select
+				className="nx-select"
 				value={schemaId}
 				onChange={(e) => setSchema(e.target.value)}
 				style={{
-					padding: "4px 8px",
-					borderRadius: 6,
-					border: "1px solid #ccc",
+					height: 28,
+					fontSize: 12,
+					padding: "0 var(--space-2)",
+					minWidth: 140,
 				}}
 			>
-				{schemas.map((schema) => (
-					<option key={schema.id} value={schema.id}>
-						{schema.label}
+				{schemas.map((s) => (
+					<option key={s.id} value={s.id}>
+						{s.label}
 					</option>
 				))}
 			</select>

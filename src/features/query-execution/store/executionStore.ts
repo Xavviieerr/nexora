@@ -7,6 +7,8 @@ type ExecutionStore = {
 
 	setResults: (results: QueryRecord[]) => void;
 	setRunning: (value: boolean) => void;
+
+	clear: () => void;
 };
 
 export const useExecutionStore = create<ExecutionStore>((set) => ({
@@ -16,4 +18,6 @@ export const useExecutionStore = create<ExecutionStore>((set) => ({
 	setResults: (results) => set({ results }),
 
 	setRunning: (value) => set({ isRunning: value }),
+
+	clear: () => set({ results: [], isRunning: false }),
 }));

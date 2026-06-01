@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { GroupNode as GroupType, Logic } from "@/core/query/types";
 import { useQueryStore } from "@/state/queryStore";
 import CollapsibleGroup from "./ui/CollapsibleGroup";
@@ -6,7 +7,7 @@ import QueryBuilderDnd from "../dnd/QueryBuilderDnd";
 
 type Props = {
 	node: GroupType;
-	children: React.ReactNode;
+	children: ReactNode;
 	depth?: number;
 };
 

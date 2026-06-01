@@ -1,12 +1,13 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { DndContext, DragEndEvent, closestCenter } from "@dnd-kit/core";
 import { useQueryStore } from "@/state/queryStore";
 
 type Props = {
 	parentId: string;
 	childIds: string[];
-	children: React.ReactNode;
+	children: ReactNode;
 };
 
 export default function QueryBuilderDnd({
