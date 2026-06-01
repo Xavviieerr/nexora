@@ -2,6 +2,7 @@
 
 import { useQueryStore } from "@/state/queryStore";
 import { useHistoryStore } from "../store/historyStore";
+import { toast } from "react-toastify";
 
 export default function SaveQueryButton() {
 	const tree = useQueryStore((s) => s.tree);
@@ -9,6 +10,7 @@ export default function SaveQueryButton() {
 
 	const handleSave = () => {
 		addToHistory(tree);
+		toast.success("Query saved to history", { autoClose: 2000 });
 	};
 
 	return (

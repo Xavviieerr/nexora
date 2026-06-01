@@ -34,18 +34,29 @@ export default function ExecutionPanel() {
 				e.preventDefault();
 				redo();
 			}
+
+			// Run query with Ctrl+Enter or Cmd+Enter
+			if (
+				(isMac && e.metaKey && e.key === "Enter") ||
+				(!isMac && e.ctrlKey && e.key === "Enter")
+			) {
+				e.preventDefault();
+				runQuery();
+			}
 		};
 
 		window.addEventListener("keydown", handler);
 		return () => window.removeEventListener("keydown", handler);
-	}, [undo, redo]);
+	}, [undo, redo, runQuery]);
 
 	return (
-		<div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)" }}>
+		<div
+			style={{ display: "flex", alignItems: "center", gap: "var(--space-2)" }}
+		>
 			<button
 				className="btn btn-ghost btn-sm btn-icon"
 				onClick={undo}
-				title="Undo"
+				title="Undo (Ctrl+Z / Cmd+Z)"
 				aria-label="Undo"
 			>
 				<svg
@@ -66,7 +77,7 @@ export default function ExecutionPanel() {
 			<button
 				className="btn btn-ghost btn-sm btn-icon"
 				onClick={redo}
-				title="Redo"
+				title="Redo (Ctrl+Y / Cmd+Y or Ctrl+Shift+Z)"
 				aria-label="Redo"
 			>
 				<svg
@@ -95,7 +106,9 @@ export default function ExecutionPanel() {
 
 			<ExecuteButton onRun={runQuery} loading={loading} />
 
-			{results.length > 0 && !loading && <ResultsSummary count={results.length} />}
+			{results.length > 0 && !loading && (
+				<ResultsSummary count={results.length} />
+			)}
 		</div>
 	);
 }

@@ -81,4 +81,32 @@ describe("executeQuery", () => {
 			"Tunde",
 		]);
 	});
+
+	it("matches regex patterns and null checks", () => {
+		const tree: GroupNode = {
+			id: "root",
+			type: "group",
+			logic: "AND",
+			children: [
+				{
+					id: "regex",
+					type: "rule",
+					field: "name",
+					operator: "regex",
+					value: "^A",
+				},
+				{
+					id: "notnull",
+					type: "rule",
+					field: "status",
+					operator: "isNotNull",
+					value: "",
+				},
+			],
+		};
+
+		expect(executeQuery(tree, data).map((record) => record.name)).toEqual([
+			"Ada",
+		]);
+	});
 });

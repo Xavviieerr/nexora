@@ -23,6 +23,15 @@ function compileRule(node: RuleNode): string {
 		case "startsWith":
 			return `${field} LIKE '${node.value}%'`;
 
+		case "regex":
+			return `${field} REGEXP '${node.value}'`;
+
+		case "isNull":
+			return `${field} IS NULL`;
+
+		case "isNotNull":
+			return `${field} IS NOT NULL`;
+
 		case "in":
 			return `${field} IN (${
 				Array.isArray(node.value)

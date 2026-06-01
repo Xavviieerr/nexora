@@ -9,10 +9,17 @@ export function validateTree(node: Node, schema: Schema): ValidationError[] {
 	errors = errors.concat(validateNode(node, schema));
 
 	if (node.type === "group") {
-		if (node.children.length === 0) {
+		if (!Array.isArray(node.children) || node.children.length === 0) {
 			errors.push({
 				nodeId: node.id,
 				message: "Group cannot be empty",
+			});
+		}
+
+		if (node.logic !== "AND" && node.logic !== "OR") {
+			errors.push({
+				nodeId: node.id,
+				message: "Group logic must be AND or OR",
 			});
 		}
 

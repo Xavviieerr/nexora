@@ -3,10 +3,13 @@ export type Operator =
 	| "neq"
 	| "contains"
 	| "startsWith"
+	| "regex"
 	| "gt"
 	| "lt"
 	| "in"
-	| "between";
+	| "between"
+	| "isNull"
+	| "isNotNull";
 
 export type Logic = "AND" | "OR";
 

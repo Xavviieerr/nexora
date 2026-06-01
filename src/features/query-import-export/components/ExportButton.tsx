@@ -1,20 +1,26 @@
 "use client";
 
 import { useQueryStore } from "@/state/queryStore";
+import { toast } from "react-toastify";
 
 export default function ExportButton() {
 	const tree = useQueryStore((s) => s.tree);
 
 	const handleExport = () => {
-		const blob = new Blob([JSON.stringify(tree, null, 2)], {
-			type: "application/json",
-		});
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement("a");
-		a.href = url;
-		a.download = "nexora-query.json";
-		a.click();
-		URL.revokeObjectURL(url);
+		try {
+			const blob = new Blob([JSON.stringify(tree, null, 2)], {
+				type: "application/json",
+			});
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = "nexora-query.json";
+			a.click();
+			URL.revokeObjectURL(url);
+			toast.success("Query exported successfully", { autoClose: 2000 });
+		} catch (error) {
+			toast.error("Failed to export query", { autoClose: 2000 });
+		}
 	};
 
 	return (

@@ -2,6 +2,7 @@
 
 import { ChangeEvent } from "react";
 import { useQueryStore } from "@/state/queryStore";
+import { toast } from "react-toastify";
 
 export default function ImportButton() {
 	const importQuery = useQueryStore((s) => s.importQuery);
@@ -14,8 +15,9 @@ export default function ImportButton() {
 			const text = await file.text();
 			importQuery(text);
 			event.target.value = "";
-		} catch {
-			alert("Unable to import file");
+			toast.success("Query file imported successfully", { autoClose: 2000 });
+		} catch (error) {
+			toast.error("Failed to import query file", { autoClose: 2000 });
 		}
 	};
 

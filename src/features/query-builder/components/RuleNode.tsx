@@ -15,8 +15,11 @@ const OPERATOR_LABELS: Record<string, string> = {
 	lt: "<",
 	contains: "contains",
 	startsWith: "starts with",
+	regex: "regex",
 	in: "in",
 	between: "between",
+	isNull: "is null",
+	isNotNull: "is not null",
 };
 
 function RuleNodeBase({ node }: Props) {
@@ -28,6 +31,8 @@ function RuleNodeBase({ node }: Props) {
 	const isFieldValid = Boolean(fieldDef);
 	const safeOperators = fieldDef ? operatorMatrix[fieldDef.type] : [];
 	const availableOperators = safeOperators;
+	const noValueOperators: Operator[] = ["isNull", "isNotNull"];
+	const needsValue = !noValueOperators.includes(node.operator);
 	const inputValue =
 		typeof node.value === "string" || typeof node.value === "number"
 			? node.value
@@ -80,13 +85,20 @@ function RuleNodeBase({ node }: Props) {
 				className="nx-select"
 				value={node.operator}
 				style={{ minWidth: 90 }}
-				onChange={(e) =>
+				onChange={(e) => {
+					const selected = e.target.value as Operator;
 					updateNode(node.id, (current) =>
 						current.type === "rule"
-							? { ...current, operator: e.target.value as Operator }
+							? {
+									...current,
+									operator: selected,
+									value: noValueOperators.includes(selected)
+										? ""
+										: current.value,
+								}
 							: current,
-					)
-				}
+					);
+				}}
 			>
 				{availableOperators.map((op) => (
 					<option key={op} value={op}>
@@ -95,7 +107,11 @@ function RuleNodeBase({ node }: Props) {
 				))}
 			</select>
 
-			{fieldDef?.type === "enum" ? (
+			{!needsValue ? (
+				<span className="no-value-label" style={{ minWidth: 120, flex: 1 }}>
+					no value required
+				</span>
+			) : fieldDef?.type === "enum" ? (
 				<select
 					className="nx-select"
 					value={typeof node.value === "string" ? node.value : ""}
