@@ -19,6 +19,14 @@ export function validateNode(node: Node, schema: Schema): ValidationError[] {
 	}
 
 	const field = schema.fields.find((f) => f.name === node.field);
+	if (!field) {
+		return [
+			{
+				nodeId: node.id,
+				message: `Unknown field: ${node.field}`,
+			},
+		];
+	}
 
 	if (!field) {
 		errors.push({

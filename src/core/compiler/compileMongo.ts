@@ -8,6 +8,7 @@ export type MongoQuery =
 	  };
 
 function compileRule(node: RuleNode): MongoQuery {
+	if (!node.field) return {};
 	switch (node.operator) {
 		case "eq":
 			return {
