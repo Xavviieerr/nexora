@@ -1,7 +1,6 @@
 "use client";
 
 import { DndContext, DragEndEvent, closestCenter } from "@dnd-kit/core";
-
 import { useQueryStore } from "@/state/queryStore";
 
 type Props = {
@@ -19,20 +18,12 @@ export default function QueryBuilderDnd({
 
 	function handleDragEnd(event: DragEndEvent) {
 		const { active, over } = event;
-
 		if (!over) return;
-
-		if (active.id === over.id) {
-			return;
-		}
+		if (active.id === over.id) return;
 
 		const fromIndex = childIds.indexOf(String(active.id));
-
 		const toIndex = childIds.indexOf(String(over.id));
-
-		if (fromIndex === -1 || toIndex === -1) {
-			return;
-		}
+		if (fromIndex === -1 || toIndex === -1) return;
 
 		reorderChildren(parentId, fromIndex, toIndex);
 	}

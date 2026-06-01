@@ -1,6 +1,12 @@
 import { createGroupNode } from "@/core/query/createNode";
+import { GroupNode } from "@/core/query/types";
 
-export const defaultPresets = [
+type QueryPreset = {
+	name: string;
+	tree: GroupNode;
+};
+
+export const defaultPresets: QueryPreset[] = [
 	{
 		name: "Active Users",
 		tree: {

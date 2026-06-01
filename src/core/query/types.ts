@@ -10,12 +10,14 @@ export type Operator =
 
 export type Logic = "AND" | "OR";
 
+export type QueryValue = string | number | boolean | Date | string[] | number[];
+
 export type RuleNode = {
 	id: string;
 	type: "rule";
 	field: string;
 	operator: Operator;
-	value: any;
+	value: QueryValue;
 };
 
 export type GroupNode = {

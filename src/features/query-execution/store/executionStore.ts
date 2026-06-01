@@ -1,10 +1,11 @@
 import { create } from "zustand";
+import { QueryRecord } from "../types";
 
 type ExecutionStore = {
-	results: any[];
+	results: QueryRecord[];
 	isRunning: boolean;
 
-	setResults: (results: any[]) => void;
+	setResults: (results: QueryRecord[]) => void;
 	setRunning: (value: boolean) => void;
 };
 

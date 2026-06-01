@@ -1,38 +1,40 @@
 "use client";
 
 import { ChangeEvent } from "react";
-import { isValidNode } from "@/core/query/isValidNode";
 import { useQueryStore } from "@/state/queryStore";
 
 export default function ImportButton() {
-	const setTree = useQueryStore((s) => s.setTree);
+	const importQuery = useQueryStore((s) => s.importQuery);
 
 	const handleImport = async (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
-
-		if (!file) {
-			return;
-		}
+		if (!file) return;
 
 		try {
 			const text = await file.text();
-
-			const parsed = JSON.parse(text);
-
-			if (!isValidNode(parsed)) {
-				alert("Invalid query structure");
-				return;
-			}
-
-			setTree(parsed);
+			importQuery(text);
+			event.target.value = "";
 		} catch {
 			alert("Unable to import file");
 		}
 	};
 
 	return (
-		<label>
-			Import Query
+		<label className="import-label" title="Import query from JSON">
+			<svg
+				width="12"
+				height="12"
+				viewBox="0 0 16 16"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="1.8"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			>
+				<path d="M8 6v7M5 9l3-3 3 3" />
+				<path d="M3 12h10" />
+			</svg>
+			Import
 			<input
 				type="file"
 				accept=".json"

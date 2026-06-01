@@ -1,4 +1,4 @@
-import { Node, RuleNode, GroupNode } from "./types";
+import { RuleNode, GroupNode } from "./types";
 
 export function createRuleNode(): RuleNode {
 	return {

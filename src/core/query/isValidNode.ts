@@ -1,4 +1,35 @@
-import { Node } from "./types";
+import { Logic, Node, Operator, QueryValue } from "./types";
+
+const operators: Operator[] = [
+	"eq",
+	"neq",
+	"contains",
+	"startsWith",
+	"gt",
+	"lt",
+	"in",
+	"between",
+];
+
+const logicValues: Logic[] = ["AND", "OR"];
+
+function isQueryValue(value: unknown): value is QueryValue {
+	if (
+		typeof value === "string" ||
+		typeof value === "number" ||
+		typeof value === "boolean"
+	) {
+		return true;
+	}
+
+	if (Array.isArray(value)) {
+		return value.every(
+			(item) => typeof item === "string" || typeof item === "number",
+		);
+	}
+
+	return false;
+}
 
 export function isValidNode(value: unknown): value is Node {
 	if (!value || typeof value !== "object") {
@@ -12,11 +43,20 @@ export function isValidNode(value: unknown): value is Node {
 	}
 
 	if (node.type === "rule") {
-		return typeof node.field === "string" && typeof node.operator === "string";
+		return (
+			typeof node.field === "string" &&
+			typeof node.operator === "string" &&
+			operators.includes(node.operator as Operator) &&
+			isQueryValue(node.value)
+		);
 	}
 
 	if (node.type === "group") {
-		if (!Array.isArray(node.children)) {
+		if (
+			typeof node.logic !== "string" ||
+			!logicValues.includes(node.logic as Logic) ||
+			!Array.isArray(node.children)
+		) {
 			return false;
 		}
 

@@ -22,5 +22,9 @@ export default function RunQueryButton() {
 		setRunning(false);
 	};
 
-	return <button onClick={runQuery}>Run Query</button>;
+	return (
+		<button className="btn btn-run" onClick={runQuery}>
+			Run Query
+		</button>
+	);
 }

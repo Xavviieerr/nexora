@@ -1,4 +1,4 @@
-import { Node, GroupNode } from "./types";
+import { Node } from "./types";
 
 export function traverseTree(node: Node, visit: (node: Node) => void) {
 	visit(node);

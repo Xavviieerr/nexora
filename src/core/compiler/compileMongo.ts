@@ -1,6 +1,13 @@
 import { GroupNode, Node, RuleNode } from "@/core/query/types";
 
-function compileRule(node: RuleNode) {
+export type MongoQuery =
+	| Record<string, unknown>
+	| {
+			$and?: MongoQuery[];
+			$or?: MongoQuery[];
+	  };
+
+function compileRule(node: RuleNode): MongoQuery {
 	switch (node.operator) {
 		case "eq":
 			return {
@@ -29,12 +36,24 @@ function compileRule(node: RuleNode) {
 				},
 			};
 
+		case "startsWith":
+			return {
+				[node.field]: {
+					$regex: `^${node.value}`,
+					$options: "i",
+				},
+			};
+
 		default:
 			return {};
 	}
 }
 
-function compileGroup(node: GroupNode) {
+function compileGroup(node: GroupNode): MongoQuery {
+	if (node.children.length === 0) {
+		return {};
+	}
+
 	const compiledChildren = node.children.map(compileMongo);
 
 	if (node.logic === "AND") {
@@ -48,7 +67,7 @@ function compileGroup(node: GroupNode) {
 	};
 }
 
-export function compileMongo(node: Node): unknown {
+export function compileMongo(node: Node): MongoQuery {
 	if (node.type === "rule") {
 		return compileRule(node);
 	}

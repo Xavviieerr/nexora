@@ -5,12 +5,7 @@ import { updateNode as updateTree } from "@/core/query/updateNode";
 import { deleteNode as deleteTree } from "@/core/query/deleteNode";
 import { defaultSchema, Schema } from "@/core/schema/schema";
 import { reorderNode } from "@/core/query/reorderNode";
-
-type HistoryState = {
-	past: Node[];
-	present: Node;
-	future: Node[];
-};
+import { isValidNode } from "@/core/query/isValidNode";
 
 type QueryStore = {
 	tree: Node;
@@ -37,6 +32,8 @@ type QueryStore = {
 	redo: () => void;
 
 	setTree: (tree: Node) => void;
+	exportQuery: () => string;
+	importQuery: (json: string) => void;
 };
 
 function pushHistory(state: QueryStore, newTree: Node): QueryStore {
@@ -62,6 +59,18 @@ export const useQueryStore = create<QueryStore>((set, get) => ({
 			tree,
 			future: [],
 		})),
+
+	exportQuery: () => JSON.stringify(get().tree, null, 2),
+
+	importQuery: (json) => {
+		const parsed: unknown = JSON.parse(json);
+
+		if (!isValidNode(parsed)) {
+			throw new Error("Invalid query structure");
+		}
+
+		set((state) => pushHistory(state, parsed));
+	},
 
 	addRule: (parentId) => {
 		const newRule = createRuleNode();

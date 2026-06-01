@@ -1,4 +1,6 @@
-export const mockDataset = [
+import { QueryRecord } from "../types";
+
+export const mockDataset: QueryRecord[] = [
 	{ name: "Ayo", age: 22, status: "active" },
 	{ name: "Tolu", age: 17, status: "inactive" },
 	{ name: "Zainab", age: 30, status: "active" },
