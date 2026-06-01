@@ -12,6 +12,7 @@ import HistoryPanel from "@/features/query-history/components/HistoryPanel";
 import SaveQueryButton from "@/features/query-history/components/SaveQueryButton";
 import ImportExportPanel from "@/features/query-import-export/components/ImportExportPanel";
 import PresetPanel from "@/features/query-history/components/PresetPanel";
+import SchemaSelector from "@/features/query-schema/components/SchemaSleector";
 
 type SidebarTab = "preview" | "history" | "presets";
 type Theme = "light" | "dark";
@@ -102,7 +103,7 @@ export default function Page() {
 							{errors.length} issue{errors.length !== 1 ? "s" : ""}
 						</span>
 					)}
-
+					<SchemaSelector />
 					<ImportExportPanel />
 
 					<SaveQueryButton />

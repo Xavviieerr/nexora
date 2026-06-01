@@ -25,7 +25,9 @@ function RuleNodeBase({ node }: Props) {
 	const schema = useQueryStore((s) => s.schema);
 
 	const fieldDef = schema.fields.find((f) => f.name === node.field);
-	const availableOperators = fieldDef ? operatorMatrix[fieldDef.type] : [];
+	const isFieldValid = Boolean(fieldDef);
+	const safeOperators = fieldDef ? operatorMatrix[fieldDef.type] : [];
+	const availableOperators = safeOperators;
 	const inputValue =
 		typeof node.value === "string" || typeof node.value === "number"
 			? node.value
