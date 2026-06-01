@@ -134,11 +134,9 @@ The AST is compiled into MongoDB-style query syntax.
 
 ```json
 {
-  "$and": [
-    { "age": { "$gt": 18 } },
-    { "status": "active" }
-  ]
+	"$and": [{ "age": { "$gt": 18 } }, { "status": "active" }]
 }
+```
 
 ## 5. Validation Engine
 
@@ -212,12 +210,12 @@ Optimizations include:
 
 ## 10. Tradeoffs
 
-| Decision | Tradeoff |
-|----------|----------|
-| AST structure | Simplicity vs expensive global updates |
-| Recursive UI | Clarity vs potential deep tree cost |
-| Centralized Zustand store | Predictability vs scaling complexity |
-| In-memory history | Fast UX vs memory growth |
+| Decision                  | Tradeoff                               |
+| ------------------------- | -------------------------------------- |
+| AST structure             | Simplicity vs expensive global updates |
+| Recursive UI              | Clarity vs potential deep tree cost    |
+| Centralized Zustand store | Predictability vs scaling complexity   |
+| In-memory history         | Fast UX vs memory growth               |
 
 ---
 
@@ -254,4 +252,3 @@ Nexora is a production-grade frontend system demonstrating:
 - Real-time query compilation
 - Complex state orchestration
 - Scalable frontend architecture design
-```
