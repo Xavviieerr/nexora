@@ -37,6 +37,35 @@ export function validateNode(node: Node, schema: Schema): ValidationError[] {
 		});
 	}
 
+	// enhanced validation for new operators
+
+	if (node.operator === "between") {
+		const value = node.value;
+
+		if (!Array.isArray(value)) {
+			const parts = String(value).split(",");
+			if (parts.length !== 2) {
+				errors.push({
+					nodeId: node.id,
+					message: "Between requires two values (min, max)",
+				});
+			}
+		}
+	}
+
+	if (node.operator === "in") {
+		const value = node.value;
+
+		if (!Array.isArray(value)) {
+			if (typeof value !== "string" || value.length === 0) {
+				errors.push({
+					nodeId: node.id,
+					message: "In operator requires a list of values",
+				});
+			}
+		}
+	}
+
 	if (node.value === "" || node.value === null) {
 		errors.push({
 			nodeId: node.id,
