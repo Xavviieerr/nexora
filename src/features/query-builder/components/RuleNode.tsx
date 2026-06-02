@@ -1,8 +1,13 @@
 import { memo } from "react";
 import { Operator, QueryValue, RuleNode as RuleType } from "@/core/query/types";
+
 import { useQueryStore } from "@/state/queryStore";
-import { operatorMatrix } from "@/core/schema/operatorMatrix";
-import { inferInputType } from "@/core/schema/inferInputType";
+import {
+	getAvailableOperators,
+	needsValue,
+	parseInputValue,
+	NO_VALUE_OPERATORS,
+} from "../helpers/ruleNodeLogic";
 
 type Props = {
 	node: RuleType;
@@ -28,23 +33,15 @@ function RuleNodeBase({ node }: Props) {
 	const schema = useQueryStore((s) => s.schema);
 
 	const fieldDef = schema.fields.find((f) => f.name === node.field);
-	const isFieldValid = Boolean(fieldDef);
-	const safeOperators = fieldDef ? operatorMatrix[fieldDef.type] : [];
-	const availableOperators = safeOperators;
-	const noValueOperators: Operator[] = ["isNull", "isNotNull"];
-	const needsValue = !noValueOperators.includes(node.operator);
+
+	const availableOperators = getAvailableOperators(fieldDef?.type);
+
+	const needsValueFlag = needsValue(node.operator);
+
 	const inputValue =
 		typeof node.value === "string" || typeof node.value === "number"
 			? node.value
 			: "";
-
-	const getInputValue = (rawValue: string): QueryValue => {
-		if (fieldDef?.type === "number") {
-			return rawValue === "" ? "" : Number(rawValue);
-		}
-
-		return rawValue;
-	};
 
 	return (
 		<div id={`node-${node.id}`} className="query-rule">
@@ -55,11 +52,13 @@ function RuleNodeBase({ node }: Props) {
 				onChange={(e) => {
 					const newField = e.target.value;
 					const newFieldDef = schema.fields.find((f) => f.name === newField);
-					const newOperators = newFieldDef
-						? operatorMatrix[newFieldDef.type]
+
+					const safeOperators = newFieldDef
+						? getAvailableOperators(newFieldDef.type)
 						: [];
+
 					const newOperator: Operator =
-						newOperators.length > 0 ? newOperators[0] : "eq";
+						safeOperators.length > 0 ? safeOperators[0] : "eq";
 
 					updateNode(node.id, (current) =>
 						current.type === "rule"
@@ -87,12 +86,13 @@ function RuleNodeBase({ node }: Props) {
 				style={{ minWidth: 90 }}
 				onChange={(e) => {
 					const selected = e.target.value as Operator;
+
 					updateNode(node.id, (current) =>
 						current.type === "rule"
 							? {
 									...current,
 									operator: selected,
-									value: noValueOperators.includes(selected)
+									value: NO_VALUE_OPERATORS.includes(selected)
 										? ""
 										: current.value,
 								}
@@ -107,41 +107,24 @@ function RuleNodeBase({ node }: Props) {
 				))}
 			</select>
 
-			{!needsValue ? (
+			{!needsValueFlag ? (
 				<span className="no-value-label" style={{ minWidth: 120, flex: 1 }}>
 					no value required
 				</span>
-			) : fieldDef?.type === "enum" ? (
-				<select
-					className="nx-select"
-					value={typeof node.value === "string" ? node.value : ""}
-					style={{ minWidth: 120, flex: 1 }}
-					onChange={(e) =>
-						updateNode(node.id, (current) =>
-							current.type === "rule"
-								? { ...current, value: e.target.value }
-								: current,
-						)
-					}
-				>
-					<option value="">value...</option>
-					{fieldDef.options?.map((opt) => (
-						<option key={opt} value={opt}>
-							{opt}
-						</option>
-					))}
-				</select>
 			) : (
 				<input
 					className="nx-input"
-					type={fieldDef ? inferInputType(fieldDef.type) : "text"}
+					type="text"
 					value={inputValue}
 					placeholder="value..."
 					style={{ minWidth: 100, flex: 1 }}
 					onChange={(e) =>
 						updateNode(node.id, (current) =>
 							current.type === "rule"
-								? { ...current, value: getInputValue(e.target.value) }
+								? {
+										...current,
+										value: parseInputValue(e.target.value, fieldDef?.type),
+									}
 								: current,
 						)
 					}

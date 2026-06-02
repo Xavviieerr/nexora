@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { updateNode } from "./updateNode";
-import { createGroupNode, createRuleNode } from "./createNode";
+import { updateNode } from "../../core/query/updateNode";
+import { createGroupNode, createRuleNode } from "../../core/query/createNode";
 
 describe("updateNode", () => {
 	it("updates a rule node correctly", () => {

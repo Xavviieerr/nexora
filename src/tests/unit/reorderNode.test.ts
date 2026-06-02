@@ -1,5 +1,5 @@
-import { reorderNode } from "../reorderNode";
-import { createGroupNode, createRuleNode } from "../createNode";
+import { reorderNode } from "../../core/query/reorderNode";
+import { createGroupNode, createRuleNode } from "../../core/query/createNode";
 
 describe("reorderNode", () => {
 	it("should reorder children inside a group", () => {

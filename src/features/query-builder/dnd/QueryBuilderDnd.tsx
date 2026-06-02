@@ -19,12 +19,17 @@ export default function QueryBuilderDnd({
 
 	function handleDragEnd(event: DragEndEvent) {
 		const { active, over } = event;
+
 		if (!over) return;
 		if (active.id === over.id) return;
 
-		const fromIndex = childIds.indexOf(String(active.id));
-		const toIndex = childIds.indexOf(String(over.id));
-		if (fromIndex === -1 || toIndex === -1) return;
+		const activeId = String(active.id);
+		const overId = String(over.id);
+
+		const fromIndex = childIds.indexOf(activeId);
+		const toIndex = childIds.indexOf(overId);
+
+		if (fromIndex < 0 || toIndex < 0) return;
 
 		reorderChildren(parentId, fromIndex, toIndex);
 	}

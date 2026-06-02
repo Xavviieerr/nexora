@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { Node } from "@/core/query/types";
+
 import RuleNode from "./RuleNode";
 import GroupNode from "./GroupNode";
 import SortableNode from "../dnd/SortableNode";
@@ -26,4 +27,5 @@ function NodeRendererBase({ node, depth = 0 }: Props) {
 }
 
 const NodeRenderer = memo(NodeRendererBase);
+
 export default NodeRenderer;
