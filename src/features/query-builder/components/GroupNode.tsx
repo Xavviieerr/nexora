@@ -1,9 +1,11 @@
 import type { ReactNode } from "react";
 import { GroupNode as GroupType, Logic } from "@/core/query/types";
-import { useQueryStore } from "@/state/queryStore";
 import CollapsibleGroup from "./ui/CollapsibleGroup";
 import SortableGroup from "../dnd/SortableGroup";
 import QueryBuilderDnd from "../dnd/QueryBuilderDnd";
+
+import { useQueryBuilderActions } from "../hooks/useQueryBuilderActions";
+import { getNextLogic } from "../helpers/groupNodeLogic";
 
 type Props = {
 	node: GroupType;
@@ -12,16 +14,16 @@ type Props = {
 };
 
 export default function GroupNode({ node, children, depth = 0 }: Props) {
-	const addRule = useQueryStore((s) => s.addRule);
-	const addGroup = useQueryStore((s) => s.addGroup);
-	const deleteNode = useQueryStore((s) => s.deleteNode);
-	const updateNode = useQueryStore((s) => s.updateNode);
+	const { addRule, addGroup, deleteNode, updateNode } =
+		useQueryBuilderActions();
 
 	const isRoot = depth === 0;
 
 	const handleLogicToggle = (e: React.MouseEvent) => {
 		e.stopPropagation();
-		const next: Logic = node.logic === "AND" ? "OR" : "AND";
+
+		const next: Logic = getNextLogic(node.logic);
+
 		updateNode(node.id, (current) =>
 			current.type === "group" ? { ...current, logic: next } : current,
 		);
@@ -39,10 +41,16 @@ export default function GroupNode({ node, children, depth = 0 }: Props) {
 		>
 			{/* Logic badge — click to toggle AND/OR */}
 			<button
-				className={`logic-badge ${node.logic === "AND" ? "logic-badge-and" : "logic-badge-or"}`}
+				className={`logic-badge ${
+					node.logic === "AND" ? "logic-badge-and" : "logic-badge-or"
+				}`}
 				onClick={handleLogicToggle}
 				title={`Toggle to ${node.logic === "AND" ? "OR" : "AND"}`}
-				style={{ cursor: "pointer", border: "none", fontFamily: "inherit" }}
+				style={{
+					cursor: "pointer",
+					border: "none",
+					fontFamily: "inherit",
+				}}
 			>
 				{node.logic}
 			</button>
@@ -176,7 +184,6 @@ export default function GroupNode({ node, children, depth = 0 }: Props) {
 							stroke="currentColor"
 							strokeWidth="2"
 							strokeLinecap="round"
-							strokeLinejoin="round"
 						>
 							<rect x="2" y="2" width="12" height="12" rx="2" />
 							<path d="M8 5v6M5 8h6" />

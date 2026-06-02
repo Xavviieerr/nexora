@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { executeQuery } from "./executeQuery";
+import { executeQuery } from "../../features/query-execution/engine/executeQuery";
 import { GroupNode } from "@/core/query/types";
-import { QueryRecord } from "../types";
+import { QueryRecord } from "../../features/query-execution/types";
 
 const data: QueryRecord[] = [
 	{ name: "Ada", age: 25, status: "active" },
